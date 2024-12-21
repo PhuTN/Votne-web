@@ -1,0 +1,10 @@
+#miniDeleteIcon{
+    cursor: pointer; 
+    margin-top: -10px;
+    margin-right: -100px; 
+}
+
+#miniDeleteIcon:hover #miniDeletePath {
+    stroke: red; /* Màu khi hover */
+  }
+

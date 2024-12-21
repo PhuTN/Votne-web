@@ -1,0 +1,66 @@
+/* Tăng kích thước tổng thể cho toàn bộ thành phần */
+#CartContainer {
+    font-size: 1.2rem; /* Tăng kích thước chữ cho toàn bộ container */
+    padding: 20px;
+}
+
+#CartHeader {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#CartItemContainer {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.2rem; /* Tăng kích thước chữ cho các thành phần trong CartItem */
+}
+
+#CartItemContainer img {
+    width: 80px; /* Tăng kích thước hình ảnh sản phẩm */
+    height: 80px;
+    margin-right: 20px;
+}
+
+#ItemName {
+    font-size: 1.2rem; /* Tăng kích thước tên sản phẩm */
+    font-weight: bold;
+}
+
+#ItemPrice {
+    font-size: 1.2rem; /* Tăng kích thước giá tiền */
+    color: #333;
+    margin-left: 20px;
+}
+
+#TotalContainer {
+    font-size: 1.3rem; /* Tăng kích thước chữ tổng tiền */
+    margin-top: 20px;
+    text-align: right;
+}
+
+#CheckoutButtonStyled {
+    font-size: 1.3rem;
+    padding: 10px 20px;
+    width: 100%;
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#DeleteIcon2 {
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    margin-top: -5px;
+    
+    margin-left: 280px;
+}
+
+#DeleteIcon:hover #miniDeletePath {
+    stroke: red;
+}
