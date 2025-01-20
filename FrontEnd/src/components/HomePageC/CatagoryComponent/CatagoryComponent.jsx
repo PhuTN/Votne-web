@@ -8,6 +8,16 @@ const ImageContainer = styled.div`
   height: 280px;
   overflow: hidden;
   border: 1px solid #ccc;
+
+  @media (max-width: 1023px) {
+    width: 260px;
+    height: 260px;
+  }
+
+  @media (max-width: 768px) {
+    width: 220px;
+    height: 220px;
+  }
   
 `;
 
@@ -35,8 +45,7 @@ const DiagonalText = styled.div`
   color: white;
   font-size: 23px;
   font-weight: bold;
-  background: rgba(29, 160, 241, 0.7)
-  ;
+  background: rgba(29, 160, 241, 0.7);
   padding: 5px 5px;
   text-align: center;
   pointer-events: none;
@@ -45,11 +54,11 @@ const DiagonalText = styled.div`
 
 const CatagoryComponent = ({ src, text, url }) => {
   return (
-    <Link to = {`/product/${url}`} style={{textDecoration:'none'}} data-testid = {text}>
-    <ImageContainer>
-      <Image src={src} alt="Image" />
-      <DiagonalText>{text}</DiagonalText>
-    </ImageContainer>
+    <Link to={`/product/${url}`} style={{ textDecoration: 'none' }} data-testid={text}>
+      <ImageContainer>
+        <Image src={src} alt="Image" />
+        <DiagonalText>{text}</DiagonalText>
+      </ImageContainer>
     </Link>
   );
 };

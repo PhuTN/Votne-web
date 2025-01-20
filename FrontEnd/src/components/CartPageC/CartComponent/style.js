@@ -3,7 +3,6 @@ import { Button, InputNumber, Card, Row, Col } from 'antd';
 import styled from 'styled-components';
 
 const CartContainer = styled.div`
-  width: 1200px;
   padding: 10px 20px;
   background-color: white;
   border-radius: 8px;
@@ -11,7 +10,6 @@ const CartContainer = styled.div`
 `;
 
 const CartHeader = styled.div`
-
   padding: 10px;
   color: black;
   text-align: left;
@@ -31,20 +29,15 @@ const CartItemContainer = styled.div`
 `;
 
 const ItemDetails = styled.div`
-  flex: 1;
   margin-left: 15px;
-  width: fit-content;
-  
 `;
-
-
 
 
 
 const TotalContainer = styled.div`
   margin-top: 20px;
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   text-align: right; /* Dính sang phải */
 `;
@@ -54,6 +47,16 @@ const ItemPrice = styled.div`
   font-weight: bold;
   text-align: right; /* Dính sang phải */
   margin-top: 35px;
+
+    font-size:14px;
+
+  @media (max-width: 1024px and min-width: 768px) {
+    font-size:14px;
+  }
+
+  @media (max-width: 767px) {
+    font-size:13px;
+  }
 `;
 
 const deleteI = styled.svg`
@@ -72,13 +75,13 @@ const CheckoutButtonStyled = styled(Button)`
   margin-top: 15px;
 
   &:hover {
-    background-color: #e64a19;
+    border-color: #1DA0F1;
+    opacity: 0.9;
   }
 `;
 
 const ItemName = styled.p`
   text-align: left;
-  width: 500px;
   line-height: 1.5;
   max-height: 3em;
   overflow: hidden;
@@ -89,8 +92,18 @@ const ItemName = styled.p`
   &:hover {
     color: #1DA0F1;
   }
+
+  font-size:14px;
+
+  @media (max-width: 1024px and min-width: 768px) {
+    font-size:14px;
+  }
+
+  @media (max-width: 767px) {
+    font-size:13px;
+  }
 `
 
 
 
-export {deleteI,ItemName,CartContainer,CartHeader,CartItemContainer ,ItemPrice,TotalContainer,CheckoutButtonStyled,ItemDetails}
+export { deleteI, ItemName, CartContainer, CartHeader, CartItemContainer, ItemPrice, TotalContainer, CheckoutButtonStyled, ItemDetails }

@@ -32,9 +32,8 @@ const CartPage = () => {
             <CustomBreadcrumb items={breadcrumbItems} />
         
             <div style={{
-                width: '1200px', 
-                margin: '50px auto 50px auto', 
-                
+                maxWidth: '1200px', 
+                margin: '0 auto'
             }}>
                 <CartComponent  />
             </div>

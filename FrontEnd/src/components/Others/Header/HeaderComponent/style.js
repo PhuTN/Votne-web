@@ -2,14 +2,14 @@ import { Row ,Col, Menu,MenuItem} from "antd";
 import styled from "styled-components"
 
 export const WrapperHeader = styled(Row)`
-    padding: 10px 10%;
+    padding: 10px 0;
     background-color: white; 
     
 
     
     @media (max-width: 1500px) {
       margin: 0;
-  }
+    }
 
  
 `
@@ -78,9 +78,6 @@ const FunCol = styled(Col)`
 
 const NewMenu = styled(Menu)`
 border-radius: 10px; 
-
-
-  
 
   
   display: none; /* Ẩn menu mặc định */

@@ -1,11 +1,16 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px auto;
+  display: grid;
+  margin: 20px;
+  gap: 20px;
   max-width: 1500px;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  @media (max-width: 1023px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 export const Item = styled.div`
@@ -16,7 +21,6 @@ export const Item = styled.div`
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 10px;
-  width: 275px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 

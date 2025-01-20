@@ -29,10 +29,23 @@
   color: #61dafb;
 }
 
+.belowLaptopHide {
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.aboveLaptopHide {
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
