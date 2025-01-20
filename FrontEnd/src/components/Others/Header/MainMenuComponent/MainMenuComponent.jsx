@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import {
   NewMenu,
   MenuItem2,
@@ -14,6 +16,7 @@ import { Link } from "react-router-dom";
 
 const MainMenuComponent = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -32,7 +35,7 @@ const MainMenuComponent = () => {
 
 
         <div className={`menu-items ${isMenuOpen ? "active" : ""}`}>
-        <SubMenu>
+        <SubMenu onClick={()=>navigate("/")}>
           <span>TRANG CHỦ</span>
         </SubMenu>
 
