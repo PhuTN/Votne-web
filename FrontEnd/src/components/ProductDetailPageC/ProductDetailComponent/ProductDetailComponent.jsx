@@ -171,7 +171,7 @@ const ProductDetailComponent = ({ product, brand }) => {
     <CardWrapper>
       <ImageBlock>
         <ImageWrapper>
-          <Image src={selectedImage} alt="Vợt cầu lông" />
+          <Image width="" src={selectedImage} alt="Vợt cầu lông" />
         </ImageWrapper>
         <ThumbnailList>
           {startIndex > 0 && (
@@ -222,7 +222,7 @@ const ProductDetailComponent = ({ product, brand }) => {
         </OfferSection>
 
         {product.colors.length > 1 && (
-          <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '0 10px', width: '600px', margin: '20px 0' }}>
+          <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '0 10px', width: '100%', margin: '20px 0' }}>
             <Divider style={{ marginTop: '5px' }} orientation="left">Chọn Màu sắc</Divider>
             <OptionWrapper>
               {product.colors.map((option) => (
@@ -241,7 +241,7 @@ const ProductDetailComponent = ({ product, brand }) => {
         )}
 
         {color.inventory.length > 1 && (
-          <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '10px 10px 20px 10px', width: '600px', margin: '20px 0' }}>
+          <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '10px 10px 20px 10px', margin: '20px 0' }}>
             <Divider style={{ marginTop: '-5px' }} orientation="left">Chọn Size</Divider>
             <Radio.Group
               onChange={(e) => setSize(e.target.value)}
@@ -285,6 +285,7 @@ const ProductDetailComponent = ({ product, brand }) => {
   Thêm vào Giỏ hàng
 </CustomButton>
       </InfoBlock>
+      
     </CardWrapper>
   );
 };

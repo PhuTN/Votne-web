@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const CategoryCard = ({ title2, brands, onTitleClick }) => {
     return (
-        <Col span={4}>
+        <Col span={6}>
             <CategoryContainer>
                 <Link to={`/product/${title2}`} style={{ textDecoration: 'none' }}>
                     <CategoryTitle onClick={onTitleClick}>{title2} Cầu Lông</CategoryTitle>

@@ -15,17 +15,28 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   padding: 20px;
+  flex-wrap: wrap;
 `;
 
 const FormSection = styled.div`
   width: 60%;
   max-width: 600px;
   margin-right: 20px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-right: 0;
+  }
 `;
 
 const OrderSummarySection = styled.div`
   width: 30%;
   min-width: 300px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: 20px;
+  }
 `;
 
 const OrderSummary = styled(Card)`

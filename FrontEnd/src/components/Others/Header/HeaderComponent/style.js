@@ -2,7 +2,7 @@ import { Row ,Col, Menu,MenuItem} from "antd";
 import styled from "styled-components"
 
 export const WrapperHeader = styled(Row)`
-    padding: 10px 10%;
+    padding: 10px;
     background-color: white; 
     
 
@@ -73,6 +73,29 @@ const FunCol = styled(Col)`
     display: block; 
     opacity: 1; 
   }  
+     @media (max-width: 768px) {
+    margin-top: 10px;  /* Giảm khoảng cách trên */
+    text-align: center;
+    width: 15%;  /* Đảm bảo chiếm toàn bộ chiều rộng */
+  }
+
+  @media (min-width: 1194px) and (max-width: 1329px)  {
+    text-align: center;  /* Căn giữa cho màn hình nhỏ hơn */
+    width: 10%;
+      margin: 0;
+  }
+
+    @media (min-width: 768px) and (max-width: 1072px)  {
+    text-align: center;  /* Căn giữa cho màn hình nhỏ hơn */
+    width: 20%;
+      margin: 0;
+  }
+
+  @media (max-width: 480px) {
+    text-align: center;  /* Căn giữa cho màn hình nhỏ hơn */
+    width: 25%;
+      margin: 0;
+  }
 `
 
 

@@ -37,8 +37,8 @@ const AccountPage = () => {
   console.log(decodedToken)
   console.log("hello")
   return (
-    <div style={{width: '1200px', 
-                margin: '30px auto 50px auto', }}>
+    <div style={{
+                margin: '10px auto', }}>
         <AccountComponent personalInfo={user} orderData={orders} />
     </div>
   )

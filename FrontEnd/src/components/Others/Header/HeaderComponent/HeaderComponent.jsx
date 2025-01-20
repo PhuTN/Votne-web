@@ -188,7 +188,7 @@ let decodedToken ={}
             <PhoneNumber>0792677415</PhoneNumber>
           </HotlineContainer>
         </div>
-        <Col style={{marginRight:'30px', marginLeft:'30px' ,textAlign: 'center',position:'relative'}}>
+        <Col style={{marginRight:'15px', marginLeft:'15px' ,textAlign: 'center',position:'relative'}}>
           <ButtonSearchComponet
             onFocus={focusSearch}
             onBlur = {blurSearch}
@@ -209,7 +209,7 @@ let decodedToken ={}
           </NewMenu>
         </FunCol> */}
 
-        <FunCol style={{ marginRight:'12px', marginLeft:'12px' }}>
+        <FunCol style={{ marginRight:'12px',  marginLeft:'12px', marginTop:'12px' }}>
           <Image width={25} src={user} preview={false} />
           <LowText>TÀI KHOẢN</LowText>
           <NewMenu className="menu" >
@@ -243,7 +243,7 @@ let decodedToken ={}
         
 
       
-        <FunCol style={{ marginRight:'12px', marginLeft:'12px'  , pointerEvents: canHover && canClick ? 'auto' : 'none', }}>
+        <FunCol style={{ marginRight:'12px', marginLeft:'12px', marginTop:'12px'  , pointerEvents: canHover && canClick ? 'auto' : 'none', }}>
           <Link style={{textDecoration:'none'}} to='/cart' >
             <Image width={25} src={cart} preview={false} data-testid = "cartPageBtn" />
             <LowText>GIỎ HÀNG</LowText>

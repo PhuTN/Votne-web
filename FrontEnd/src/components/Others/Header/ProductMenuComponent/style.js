@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 const CategoryContainer = styled.div`
-    padding: 10px;
- 
+  padding: 10px;
   text-align: left;
  background-color: white;
  color: black;

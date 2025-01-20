@@ -33,9 +33,12 @@ const StyledInput = styled(Input)`
   margin-bottom: 16px;
   border-radius: 4px;
   padding: 8px;
+  
 `;
 const StyledButton = styled(Button)`
   background-color: #1da0f1;
+    margin-bottom: 8px;
+
   border-color: #1da0f1;
   color: white;
   font-weight: bold;
@@ -278,10 +281,15 @@ const LoginPageComponent = () => {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
+            <div style={{ padding: "8px" }}>
+
+            </div>
+
             <StyledInput.Password
               placeholder="Xác nhận mật khẩu"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              style={{ marginBottom: "16px" }}
             />
              {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
             <StyledButton

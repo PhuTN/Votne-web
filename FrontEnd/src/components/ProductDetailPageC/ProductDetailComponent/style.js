@@ -8,28 +8,57 @@ const CardWrapper = styled.div`
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  max-width: 900px;
-  margin: auto;
+    width: 90%;
+margin: auto;
   margin-top: 50px;
   margin-bottom: 30px;
+
+  @media (max-width: 510px) {
+    flex-direction: column;
+    width: 90%;
+    margin: auto;
+    padding: 8px;
+    
+    display: flex;
+
+  }
+
 `;
 
 const ImageBlock = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin-right: 24px;
+
+  @media (max-width: 450px) {
+  width: 100%;
+  margin: auto auto;
+
+  }
+
 `;
 
 const ImageWrapper = styled.div`
   width: 250px;
-
+margin: 0 auto;
   img {
     width: 100%;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     margin-bottom: 10px;
   }
+
+    @media (max-width: 450px) {
+    width: 50%;
+    
+    img {
+      width: 70%;
+      margin: 10px auto;
+      display: block;  /* Make sure the image is a block element */
+    }
+  }
+
+  
 `;
 
 const ThumbnailList = styled.div`
@@ -41,15 +70,16 @@ const ThumbnailList = styled.div`
 
 const ThumbnailWrapper = styled.div`
   display: flex;
+    flex-direction: row;
   align-items: center;
   overflow: hidden;
-  width: 240px;
+  width: 100%;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
 `;
 
 const Thumbnail = styled.img`
-  width: 50px;
+  width: 20%;
   height: 40px;
   border: 1px solid ${(props) => (props.active ? '#1890ff' : '#e0e0e0')};
   border-radius: 4px;
@@ -73,6 +103,7 @@ const NavButton = styled(Button)`
 const InfoBlock = styled.div`
   flex: 1;
   margin-top: -30px;
+  
 `;
 
 const Price = styled.div`
@@ -103,7 +134,14 @@ const OfferSection = styled.div`
   padding: 10px 25px 0 25px; /* Padding for spacing */
   margin-top: 20px; /* Space above the offer section */
   
-  width: 570px;
+  
+
+    @media (max-width: 450px) {
+    width: 90%;
+    padding: 0 25px;
+
+
+  }
 `;
 
 const OfferTitle = styled(Divider)`
@@ -144,7 +182,11 @@ const BenefitItem = styled.li`
     transform: translateY(-2px); /* Slight lift on hover */
     color: black; /* Darker text color on hover */
   }
+    
 `;
+
+
+
 
 
 const ActionsWrapper = styled.div`
@@ -152,6 +194,7 @@ const ActionsWrapper = styled.div`
   align-items: center;
   gap: 8px;
   margin: 16px 0;
+  
 `;
 
 const CustomButton = styled(Button)`
@@ -159,6 +202,12 @@ const CustomButton = styled(Button)`
   height: 40px;
   font-weight: bold;
   margin-right: 20px;
+
+   @media (max-width: 510px) {
+  margin:0 100px;
+  width: 50%;
+
+  }
 `;
 
 const OptionWrapper = styled.div`
@@ -176,10 +225,14 @@ const ChoiceBlock = styled.div`
   margin-bottom: 8px; /* Khoảng cách dưới cho các khối xuống hàng */
   flex: 0 0 100px; /* Chiều rộng cố định cho các khối */
   justify-content: center; /* Canh giữa */
-  width: 300px;
+  width: 100%;
   border: 1px solid #e0e0e0;
   border: ${({ isSelected }) => (isSelected ? '2px solid #1DA0F1' : '2px solid #e0e0e0')};
   background-color: ${({ isSelected }) => (isSelected ? '#f7fcfe' : 'white')};
+    @media (max-width: 450px) {
+    flex: 0 0 calc(50% - 8px); /* Two items per row with gap accounted for */
+    margin-right: 0; /* Reset margin-right for better alignment */
+  }
 `;
 
 
@@ -188,6 +241,7 @@ const ChoiceImage = styled.img`
   width: 50px; /* Kích thước hình ảnh nhỏ hơn */
   height: 50px;
   margin-right: 10px;
+
 `;
 
 const RightSide = styled.div`
@@ -201,11 +255,22 @@ const RadioGroupWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+
+
 `;
 const QuantityWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+
+
+     @media (max-width: 510px) {
+  margin:0 100px;
+  flex-direction: row;
+    gap: 10px;
+    margin:auto;
+
+  }
 `;
 
 const QuantityButton = styled(Button)`

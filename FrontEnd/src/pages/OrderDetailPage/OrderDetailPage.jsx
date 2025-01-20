@@ -183,8 +183,8 @@ console.log(result)
 
 
   return (
-    <div style={{width: '1200px', 
-                margin: '30px auto 50px auto', }}>
+    <div style={{width: '90%', 
+                margin: '10px auto', }}>
         <OrderDetailComponent personalInfo={personalInfo2} orderData={result} />
     </div>
   )

@@ -7,17 +7,32 @@ import { jwtDecode } from 'jwt-decode';
 const AccountInfoWrapper = styled.div`
   background-color: #FFFFFF;
   padding: 20px;
-  width: 1200px;
+  width: 95%;
+
   display: flex;
+  gap: 20px;
+    @media (max-width: 450px) {
+  width: 95%;
+      padding: 5px;
+
+  }
+   @media (max-width: 768px) {
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+    padding: 10px;
+
+  }
 `;
 
 const InfoContainer = styled.div`
   flex: 1;
-  margin-right: 20px;
+  margin: 0 auto;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 10px;
   height: 250px; 
+  width: 100%;
 `;
 
 const OrderContainer = styled.div`
@@ -25,6 +40,7 @@ const OrderContainer = styled.div`
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 10px;
+  width: 100%;
 `;
 
 const Header = styled.div`
@@ -64,6 +80,23 @@ const EditButton = styled(Button)`
     border-color: #e65c00;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
+`;
+const StyledTable = styled(Table)`
+  .ant-table {
+    border-radius: 8px;
+    overflow: scroll;
+    width: 100%;
+  }
+  @media (max-width: 500px) {
+  .ant-table {
+    border-radius: 8px;
+    overflow: scroll;
+    width: 95%;
+  }
+  }
+
+
+
 `;
 
 const columns = [
@@ -190,7 +223,7 @@ console.log(orderData)
       <OrderContainer>
         <Header>ĐƠN HÀNG CỦA BẠN</Header>
         <InfoSection>
-          <Table
+          <StyledTable
             dataSource={formattedOrderData}
             columns={columns}
             pagination={{ pageSize: 7 }}

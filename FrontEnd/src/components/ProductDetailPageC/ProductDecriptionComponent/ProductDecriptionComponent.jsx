@@ -10,7 +10,11 @@ const StyledTabs = styled(Tabs)`
     flex: 1; /* Mỗi tab sẽ chiếm 50% chiều rộng */
     text-align: center; /* Căn giữa nội dung trong tab */
     font-size: 20px; /* Kích thước phông chữ */
+    
   }
+    @media (max-width: 450px){
+    margin-left: 10px;
+    }
 `;
 
 const ProductDetails = ({ product }) => {
@@ -38,7 +42,7 @@ const ProductDetails = ({ product }) => {
       <TabPane tab="Mô Tả Sản Phẩm" key="1">
         <div>
           <Title level={5}>Mô Tả Sản Phẩm</Title>
-          <Text>
+          <Text >
           <div
         dangerouslySetInnerHTML={{
           __html: product.description.replace(/\n/g, '<br/>'),
@@ -55,7 +59,7 @@ const ProductDetails = ({ product }) => {
             pagination={false} 
             rowKey="label"
             bordered
-            style={{ width: "100%" }} 
+            style={{ width: "95%" }} 
           />
         </div>
       </TabPane>

@@ -11,7 +11,7 @@ const BreadcrumbWrapper = styled.div`
 
 const StyledBreadcrumb = styled(Breadcrumb)`
   font-size: 16px;
-  width: 1200px;
+  width: 100%;
   margin-left: 10px;
 
   /* Đặt màu chữ cho các mục breadcrumb */

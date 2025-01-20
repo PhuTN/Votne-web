@@ -13,12 +13,15 @@ import { fetchAttributesByType } from '../../redux/Slicer/attributeSlice';
 const ContainerWrapper = styled.div`
   display: flex;
   justify-content: center;
-  max-width: 1200px;
   margin: 0 auto;
+  @media (max-width: 450px) {
+  width: 100%;
+
+  }
 `;
 
 const Container = styled.div`
-  display: flex;
+  // display: flex;
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
