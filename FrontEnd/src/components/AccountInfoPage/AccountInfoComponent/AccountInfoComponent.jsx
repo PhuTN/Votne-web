@@ -24,6 +24,11 @@ const StyledButton = styled(Button)`
   &:hover {
     background-color: #d3541b;
     border-color: #1DA0F1;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 25px 0;
   }
 `;
 const validateUsername = (username) => {

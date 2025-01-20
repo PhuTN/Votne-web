@@ -40,7 +40,6 @@ const SubMenu = styled.div`
   font-weight: 450;
     padding: 10px; /* Thêm khoảng cách cho vùng bấm */
     text-align: left; /* Căn trái nội dung */
-    width: 100%; /* Chiếm toàn bộ chiều rộng */
     padding-left: 35px;
     &:hover {
       background-color: rgba(255, 255, 255, 0.1); /* Màu nền khi hover */

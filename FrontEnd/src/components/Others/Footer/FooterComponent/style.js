@@ -21,16 +21,14 @@ const FooterContainer = styled.div`
     @media (max-width: 450px) {
       flex-direction: column;
       gap: 5px;
-      padding-left: 10px;
       
-      width: 90%;
+      width: 100%;
     }
 
     @media (max-width: 768px) {
     width: 100%;
     flex-direction: column;
       gap: 10px;
-      padding-left: 10px;
       
     }
   }
@@ -78,6 +76,7 @@ const FooterContainer = styled.div`
       min-width: 100%;
       max-width: none;
       margin-bottom: 5px;
+      padding-left: 15px;
       h3 {
         font-size: 14px;
       }
@@ -89,7 +88,9 @@ const FooterContainer = styled.div`
     @media (max-width: 768px) {
       min-width: 90%;
       max-width: 95%;
-      margin-bottom: 10px; 
+      margin-bottom: 10px;
+            padding-left: 15px;
+
       h3 {
         font-size: 14px; 
       }

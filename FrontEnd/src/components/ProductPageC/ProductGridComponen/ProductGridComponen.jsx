@@ -7,7 +7,7 @@ const { Option } = Select;
 
 const Container = styled.div`
   width: 100%;
-  padding: 16px;
+  // padding: 16px;
 `;
 
 const Header = styled.div`
@@ -28,8 +28,17 @@ const Title = styled.h2`
 
 const ProductGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));  // Giảm kích thước tối thiểu xuống 180px
   gap: 16px;  // Giảm khoảng cách giữa các item
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1500%;
+
+  @media (max-width: 1023px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const ProductCard = styled.div`

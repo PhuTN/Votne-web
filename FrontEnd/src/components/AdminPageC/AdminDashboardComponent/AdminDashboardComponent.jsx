@@ -6,6 +6,7 @@ import { categories, columnsProduct, dataProduct } from '../../../models/fake-da
 import AdminTableComponent from '../AdminTableComponent/AdminTableComponent';
 import { Bar, Pie } from 'react-chartjs-2';  // Import Pie Chart
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import { DashBoard } from './style'
 
 // Đăng ký các thành phần cần thiết cho cả Bar và Pie
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement);
@@ -179,7 +180,7 @@ const AdminDashboardComponent = () => {
 
   return (
     <div>
-      <Row gutter={[20, 20]} style={{ margin: "5px 30px" }}>
+      <Row gutter={[16, 16]} style={{ margin: "5px 15px" }}>
         {totalData.map((item) => (
           <Col span={6} key={item.title}>
             <DashboardBox title={item.title} value={item.value} icon={item.icon} color={item.color} />
@@ -187,30 +188,55 @@ const AdminDashboardComponent = () => {
         ))}
       </Row>
 
-      <Row gutter={[30, 10]} style={{ margin: '100px 25px 100px 10px', display: 'flex', justifyContent: 'space-between' }}>
-        <Col span={10}> {/* Điều chỉnh span để thu nhỏ biểu đồ */}
-          <div style={{
-            width: '100%',
-            height: '500px', // Giới hạn chiều cao của biểu đồ Bar
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <Bar data={dataBar} options={optionsBar} style={{ width: '100%', height: '100%' }} />
-          </div>
-        </Col>
-        <Col span={10}>
-          <div style={{
-            width: '100%',
-            height: '500px', // Giới hạn chiều cao của biểu đồ Pie
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <Pie data={pieData} options={optionsPie} style={{ width: '100%', height: '100%' }} />
-          </div>
-        </Col>
-      </Row>
+      <DashBoard>
+  <Col
+    xs={{ span: 20 }}
+    sm={{ span: 20 }}
+    md={{ span: 20 }}
+    lg={{ span: 20 }}
+    xl={{ span: 10 }}
+  >
+    <div
+      style={{
+        width: "100%",
+        height: "500px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Bar
+        data={dataBar}
+        options={optionsBar}
+        style={{ width: "100%", height: "100%" }}
+      />
+    </div>
+  </Col>
+  <Col
+    xs={{ span: 20 }}
+    sm={{ span: 20 }}
+    md={{ span: 20 }}
+    lg={{ span: 20 }}
+    xl={{ span: 10 }}
+  >
+    <div
+      style={{
+        width: "100%",
+        height: "500px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Pie
+        data={pieData}
+        options={optionsPie}
+        style={{ width: "100%", height: "100%" }}
+      />
+    </div>
+  </Col>
+</DashBoard>
+
 
       {/* <Row gutter={[10, 10]} style={{ margin: '25px 10px' }}>
         <Col span={24}>

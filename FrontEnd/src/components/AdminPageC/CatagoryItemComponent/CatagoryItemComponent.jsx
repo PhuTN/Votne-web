@@ -319,6 +319,7 @@ useEffect(() => {
       onRow={(record) => ({
         onClick: () => handleAttributeClick(record),
       })}
+      scroll={{ x: 400 }}
     />
   </Col>
   <Col span={12}>
@@ -345,6 +346,8 @@ useEffect(() => {
       }
       columns={valueColumns}
       rowKey="id"
+      scroll={{ x: 400 }}
+
     />
   </Col>
 </Row>

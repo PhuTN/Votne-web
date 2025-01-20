@@ -300,7 +300,8 @@ const AdminOrdersComponent = () => {
         dataSource={filteredData}
         rowKey="_id"
         style={{ marginTop: 20 }}
-       
+        scroll={{ x: 1000 }}
+
       />
       <Modal
         title="Chi tiết sản phẩm"

@@ -22,6 +22,7 @@ const DataLayout = styled(Layout)`
     margin: 20px;
     padding: 20px;
     border-radius: 10px;
+    width: 95%;
     background-color: #ffffff;
 
     .ant-table-thead > tr > th {
@@ -38,6 +39,10 @@ const DataLayout = styled(Layout)`
     .ant-table-row-dark {
         background-color: #ffffff;
     }
+    
+    .ant-table {
+    width: 95%;
+    overflow: scroll;}
 `;
 
 

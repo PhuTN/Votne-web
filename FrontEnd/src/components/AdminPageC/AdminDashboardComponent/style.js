@@ -1,12 +1,16 @@
-import { Button, Layout, Space } from "antd";
+import { Button, Flex, Layout, Space } from "antd";
 import styled from "styled-components";
 
 const DashboardButton = styled(Button)`
-    width: 100%; // Thay đổi chiều rộng để chiếm toàn bộ không gian
     height: 120px;
     border-radius: 10px;
+    
     display: flex; // Đảm bảo sử dụng flexbox
     justify-content: space-between; // Căn chỉnh nội dung
+    @media (max-width: 1132px){
+    flex-direction: column;
+    
+    }
 `
 
 const ButtonSpace = styled(Space)`
@@ -15,6 +19,13 @@ const ButtonSpace = styled(Space)`
     flex: 1;
     padding: 10px;
     text-align: left; // Căn chỉnh chữ sang bên trái
+    @media (max-width: 1132px){
+    flex: 1;
+    flex-direction: column;
+    padding: 0px;
+    font-size: 30px;
+    
+}
 `
 
 
@@ -40,5 +51,18 @@ const DataLayout = styled(Layout)`
     }
 `;
 
+const DashBoard = styled(Layout)`
+display: flex;
+flex-direction: row;
+width: 100%;
+justify-content: space-between;
+@media (max-width: 1200px){
+flex-direction: column;
+justify-content: center;
+}
+`
+    
+        
+    
 
-export {DataLayout,DashboardButton, ButtonSpace}
+export {DashBoard,DataLayout,DashboardButton, ButtonSpace}

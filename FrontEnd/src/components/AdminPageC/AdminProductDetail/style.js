@@ -68,7 +68,7 @@ export const Wrapper = styled.div`
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 20px; /* Thêm margin cho Container */
+  margin-top: 20px; /* Thêm margin cho Container */
   padding: 30px; /* Khoảng cách bên trong cho nội dung */
   border-radius: 8px; /* Thêm bo tròn góc */
   background-color: #ffffff; /* Màu nền cho Container */
@@ -102,4 +102,5 @@ export const TableWrapper = styled.div`
   box-shadow:0px 0px 2px black;
   border-radius: 8px; /* Thêm bo tròn góc */
   padding: 20px;
+  overflow: scroll;
 `;

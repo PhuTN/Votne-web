@@ -265,8 +265,8 @@ const AdminManageAccount = () => {
   };
 
   return (
-    <div style={{ marginTop: '50px' }}>
-      <Row justify="end" style={{ marginBottom: '-100px', marginRight: '30px' }}>
+    <div style={{ marginTop: '50px', width:'95%'  }}>
+      <Row justify="end" style={{ marginBottom: '-100px', marginRight: '30px', width:'95%' }}>
         <Col>
           <div style={{ 
             backgroundColor: 'white', 
@@ -277,7 +277,6 @@ const AdminManageAccount = () => {
           }}>
             <Select
   defaultValue={orderCategories[0].value}
-  style={{ width: 150 }}
   onChange={handleCategoryChange}
   data-testid="category-select"
 >
@@ -311,11 +310,12 @@ const AdminManageAccount = () => {
         </Col>
       </Row>
 
-      <AdminTableComponent 
-        title="Tài khoản" 
-        columns={columnsOrder} 
-        data={filteredData} 
-      />
+      <AdminTableComponent
+  title="Tài khoản"
+  columns={columnsOrder}
+  data={filteredData}
+/>
+
 
       {/* Add User Modal */}
       <Modal

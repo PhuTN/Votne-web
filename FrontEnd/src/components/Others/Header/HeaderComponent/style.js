@@ -9,7 +9,7 @@ export const WrapperHeader = styled(Row)`
     
     @media (max-width: 1500px) {
       margin: 0;
-  }
+    }
 
  
 `
@@ -101,9 +101,6 @@ const FunCol = styled(Col)`
 
 const NewMenu = styled(Menu)`
 border-radius: 10px; 
-
-
-  
 
   
   display: none; /* Ẩn menu mặc định */

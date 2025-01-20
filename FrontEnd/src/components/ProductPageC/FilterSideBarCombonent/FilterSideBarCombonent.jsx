@@ -9,7 +9,7 @@ const { Panel } = Collapse;
 
 const SidebarContainer = styled.div`
   width: 280px;
-  padding: 16px;
+  // padding: 16px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 15px;

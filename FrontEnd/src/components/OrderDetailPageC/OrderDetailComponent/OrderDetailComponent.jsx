@@ -33,7 +33,7 @@ const InfoContainer = styled.div`
   @media (max-width: 768px) {
     margin-left: auto ;
     margin-right: auto ;
-    width: 100%;
+    width: 95%;
     margin-bottom: 20px;
   }
 `;
@@ -45,7 +45,7 @@ const OrderContainer = styled.div`
   padding: 10px;
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 95%;
   }
 `;
 
