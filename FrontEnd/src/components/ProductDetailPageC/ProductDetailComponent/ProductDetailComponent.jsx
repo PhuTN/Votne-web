@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button, Divider, Typography, Radio, Image, message } from 'antd';
 import { LeftOutlined, MinusOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import Gift from '../../../images/gift.gif';
-
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 // Import các styled components
 import {
   HighlightText, 
@@ -39,11 +39,45 @@ import { fetchCartByUserId, updateCart } from '../../../redux/Slicer/cartSlice';
 import { jwtDecode } from 'jwt-decode';
 
 const { Title, Text } = Typography;
+const HeartIcon = styled.div`
+  position: flex;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+`;
 
 const ProductDetailComponent = ({ product, brand }) => {
   const location = useLocation();
   const navigate = useNavigate(); 
   const [shouldRender, setShouldRender] = useState(false);
+
+  const [wishlist, setWishlist] = useState(() => {
+    const savedWishlist = localStorage.getItem("wishlist");
+    return savedWishlist ? JSON.parse(savedWishlist) : [];
+  });
+
+  // Cập nhật localStorage khi wishlist thay đổi
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  // Kiểm tra sản phẩm có trong wishlist hay không
+  const isFavorite = wishlist.includes(product._id);
+
+  // Toggle wishlist khi nhấn vào icon trái tim
+  const toggleWishlist = () => {
+    setWishlist((prevWishlist) => {
+      const updatedWishlist = isFavorite
+        ? prevWishlist.filter((id) => id !== product._id) // Xóa khỏi wishlist
+        : [...prevWishlist, product._id]; // Thêm vào wishlist
+  
+      message.success(isFavorite ? "Đã xóa khỏi danh sách yêu thích!" : "Đã thêm vào danh sách yêu thích!");
+      
+      return updatedWishlist;
+    });
+  };
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN').format(price);
   };
@@ -109,18 +143,17 @@ const ProductDetailComponent = ({ product, brand }) => {
 
       const productdat = { 
         _id: product._id || "", // Tham chiếu đến Product
-        id :1 ,
-        name:product.name,
+        id: Date.now(), // ID ngẫu nhiên dựa trên thời gian
+        name: product.name,
         quantity: quantity,
         price: color.discountPrice, // Giá sản phẩm
-       
         image: color.images[0],
-        attributeValue:size.value,
+        attributeValue: size.value,
         attributeId: size._id, // Tham chiếu đến AttributeValue
         colorid: color.id, // Mã màu sản phẩm
         colorName: color.colorName
-         // Số lượng sản phẩm
       };
+      
       
       // Kiểm tra sản phẩm đã tồn tại trong mảng `products` hay chưa
       const existingProductIndex = localCartItems?.findIndex(
@@ -167,12 +200,19 @@ const ProductDetailComponent = ({ product, brand }) => {
     // Bạn có thể thực hiện bất kỳ logic nào khác nếu cần khi giỏ hàng được cập nhật
     console.log("Cart updated, component re-rendered");
   }, [cartUpdated])
+
+
+  
   return (
     <CardWrapper>
+    
       <ImageBlock>
+      
         <ImageWrapper>
+        
           <Image width="" src={selectedImage} alt="Vợt cầu lông" />
         </ImageWrapper>
+        
         <ThumbnailList>
           {startIndex > 0 && (
             <NavButton onClick={handlePrev}>
@@ -200,6 +240,7 @@ const ProductDetailComponent = ({ product, brand }) => {
 
       <InfoBlock>
         <Title level={4}>{product.name}</Title>
+        
         <Text type="secondary">Mã: <HighlightText>{product.id}</HighlightText></Text>
         <br />
         <Text>Thương hiệu: <HighlightText>{brand}</HighlightText> | Tình trạng: <HighlightText>Còn {availableStock} sản phẩm</HighlightText></Text>
@@ -285,7 +326,9 @@ const ProductDetailComponent = ({ product, brand }) => {
   Thêm vào Giỏ hàng
 </CustomButton>
       </InfoBlock>
-      
+      <HeartIcon onClick={toggleWishlist}>
+            {isFavorite ? <HeartFilled style={{ color: "red" }} /> : <HeartOutlined />}
+          </HeartIcon>
     </CardWrapper>
   );
 };

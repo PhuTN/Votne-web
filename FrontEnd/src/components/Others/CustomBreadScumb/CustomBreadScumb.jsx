@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const BreadcrumbWrapper = styled.div`
   padding: 16px 0 16px 15px;
-  background-color: rgb(245, 245, 245);
+ 
   display: flex; /* Sử dụng flexbox */
   justify-content: center; /* Căn giữa nội dung */
 `;

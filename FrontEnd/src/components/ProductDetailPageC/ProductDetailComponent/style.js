@@ -138,7 +138,7 @@ const OfferSection = styled.div`
 
     @media (max-width: 450px) {
     width: 90%;
-    padding: 0 25px;
+    padding: 0 15px;
 
 
   }

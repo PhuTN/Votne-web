@@ -77,7 +77,7 @@ router.get("/by-id/:orderId", authMiddleware, async (req, res) => {
     const { orderId } = req.params;
     
     const order = await orderService.getOrderById(orderId);
-   
+   console.log(order)
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
@@ -123,6 +123,7 @@ router.post(
         data: newOrder,
       });
     } catch (err) {
+      console.log(err)
       res.status(500).json({ error: err.message });
     }
   }

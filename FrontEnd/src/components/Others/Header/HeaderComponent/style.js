@@ -1,4 +1,4 @@
-import { Row ,Col, Menu,MenuItem} from "antd";
+import { Row ,Col, Menu,MenuItem, Button} from "antd";
 import styled from "styled-components"
 
 export const WrapperHeader = styled(Row)`
@@ -11,7 +11,11 @@ export const WrapperHeader = styled(Row)`
       margin: 0;
     }
 
- 
+    @media (max-width: 768px) {
+  display: none;  // Hiển thị trên các thiết bị nhỏ hơn hoặc bằng iPad
+
+  /* Cập nhật các kiểu khác cho header mobile */
+}
 `
 
 const HotlineContainer = styled.div`
@@ -26,7 +30,19 @@ const Icon = styled.span`
   font-size: 20px;
   margin-right: 5px;
 `;
+const SearchIconButton = styled(Button)`
+    //border-radius: 0 4px 4px 0; 
+    border: 0;
 
+    color: ${(props) => (props.className === 'listening' ? '#ff4d4f' : '#1890ff')};
+background-color: ${(props) =>
+  props.className === 'listening' ? '#fff1f0' : 'transparent'};
+
+&:hover {
+  color: #ff4d4f;
+  background-color: #fff1f0;
+}
+`
 const Label = styled.span`
   color: black;
   font-weight: bold;
@@ -128,6 +144,23 @@ border-radius: 10px;
     border-right: 10px solid transparent; /* Cạnh phải */
     border-bottom: 10px solid #1DA0F1; /* Màu tam giác (trùng với màu nền menu) */
   }
+
+
+  @media (max-width: 768px) {
+    left: 135%; /* Canh giữa */
+  transform: translateX(-50%); /* Đưa menu về giữa */
+  margin-top: 0px;
+    &::before {
+    content: '';
+    position: absolute; /* Định vị tam giác */
+    top: -5px; /* Đưa tam giác lên trên menu */
+    left: 50%; /* Canh giữa tam giác */
+    transform: translateX(-50%); /* Đưa tam giác về giữa */
+    border-left: 10px solid transparent; /* Cạnh trái */
+    border-right: 10px solid transparent; /* Cạnh phải */
+    border-bottom: 10px solid #1DA0F1; /* Màu tam giác (trùng với màu nền menu) */
+  }
+}
 `;
 
 const NewMenu2 = styled(Menu)`
@@ -168,4 +201,17 @@ const MenuSpan= styled.span`
   color: #000; 
   font-weight: bold;
   `
-export {NewMenu2,HotlineContainer, Icon, Label,PhoneNumber,Separator,SearchCol,LowText,FunCol,NewMenu,MenuItem2,MenuSpan} 
+
+export const HeaderMobile = styled.div`
+display: none;  // Ẩn mặc định trên màn hình lớn
+
+@media (max-width: 768px) {
+  display: block;  // Hiển thị trên các thiết bị nhỏ hơn hoặc bằng iPad
+ 
+  padding: 10px;
+  text-align: center;
+
+  /* Cập nhật các kiểu khác cho header mobile */
+}
+`;
+export {SearchIconButton ,NewMenu2,HotlineContainer, Icon, Label,PhoneNumber,Separator,SearchCol,LowText,FunCol,NewMenu,MenuItem2,MenuSpan} 

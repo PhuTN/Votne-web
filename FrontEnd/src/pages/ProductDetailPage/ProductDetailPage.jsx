@@ -9,11 +9,17 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../../redux/Slicer/productSlice';
 import { fetchAttributesByType } from '../../redux/Slicer/attributeSlice';
+import ChatBot from '../../components/ChatBot/ChatBot';
+import ChatBot2 from '../../components/ChatBot/ChatBot2';
+
+import ProductReview from '../../components/ProductReview/ProductReview';
+import { fetchReviewsByProductId } from '../../redux/Slicer/reviewSlice';
 
 const ContainerWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin: 0 auto;
+  max-width: 1200px;
   @media (max-width: 450px) {
   width: 100%;
 
@@ -48,7 +54,7 @@ const ProductDetailPage = () => {
   const { product, status, error } = useSelector((state) => state.products);
   const { attributes, status2, error2 } = useSelector((state) => state.attributes);
 
-
+console.log("PRODCUT",product)
 
 
   const filteredAttributes = attributes
@@ -72,6 +78,15 @@ const ProductDetailPage = () => {
   }, [dispatch, product?.type]);
 
   
+  const { reviews } = useSelector((state) => state.reviews);
+
+
+  useEffect(() => {
+    if (product?._id) {
+      dispatch(fetchReviewsByProductId(product?._id));
+    }
+  }, [dispatch, product?._id]);
+console.log("REVIEW",reviews)
 
   if (!product) {
     return <div>Loading...</div>; // Render loading if product is null or undefined
@@ -122,9 +137,32 @@ const ProductDetailPage = () => {
     { path: `/product/${product.type}`, label: product.type },
     { path: `/product/product-detail/${product._id}`, label: product.id }, 
   ];
+
+
+  
+
+  // Lấy dữ liệu từ Redux store
+  let mappedReviews = reviews?.map((review, index) => ({
+    id: index + 1, // Tạo ID dựa trên thứ tự
+    customerName: review.userId.username, // Lấy tên khách hàng từ userId
+    avatar: review.userId.avatar, // Lấy avatar từ userId
+    comment: review.comment, // Nội dung đánh giá
+    rating: review.star, // Số sao
+    date: new Date(review.date).toISOString().split("T")[0], // Chuyển ngày thành định dạng YYYY-MM-DD
+  }));
+  
+  console.log(mappedReviews);
+  if(!mappedReviews) mappedReviews=[]
   return (
     <div>
-      <CustomBreadcrumb items={breadcrumbItems} />
+    <ChatBot></ChatBot>
+    <ChatBot2></ChatBot2>
+
+     <div style={{backgroundColor:"rgb(245, 245, 245)"}}>
+      <div style={{maxWidth: '1150px', margin:' 0 auto' }}>
+      <CustomBreadcrumb   items={breadcrumbItems} />
+      </div>
+      </div>
       <ContainerWrapper>
         <Container>
           <LeftSection>
@@ -133,6 +171,7 @@ const ProductDetailPage = () => {
               brand={brand || ""} 
             />
             <StyledProductDetails product={productData} />
+            <ProductReview reviewss = {mappedReviews}></ProductReview>
           </LeftSection>
           {/* <RightSection>
             <SideBarProductType defaultActiveKey={[0]} />

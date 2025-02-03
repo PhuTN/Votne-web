@@ -5,6 +5,7 @@ import AccountInfoComponent from '../../components/AccountInfoPage/AccountInfoCo
 const AccountInfoPage = () => {
   return (
     <div>
+    
         <AccountInfoComponent></AccountInfoComponent>
     </div>
   )

@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { Input, Button, Radio, Space, Card, message } from 'antd';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrder } from '../../../redux/Slicer/orderSlice';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { fetchUserById } from '../../../redux/Slicer/userSlice';
 import { validateOrder } from '../../../modules/validateOrderModule';
+import { QRCodeCanvas } from 'qrcode.react'; // Import QRCodeCanvas
+import axios from 'axios'; // Import axios
+import CryptoJS from 'crypto-js';
 
 const { TextArea } = Input;
 
@@ -67,10 +70,12 @@ const ProductDetails = styled.div`
 `;
 
 const PaymentComponent = ({ products }) => {
-  const [orderNote, setOrderNote] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("Ship Cod"); // Thêm state quản lý phương thức thanh toán
-  const localCartItems1 = JSON.parse(localStorage.getItem("cartItems"));
+  const [orderNote, setOrderNote] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Ship Cod'); // State quản lý phương thức thanh toán
+  const [momoPaymentUrl, setMomoPaymentUrl] = useState(''); // Thêm state cho URL thanh toán Momo
+  const localCartItems1 = JSON.parse(localStorage.getItem('cartItems'));
 
+  // Hàm chuyển đổi dữ liệu giỏ hàng
   function transformData(inputArray) {
     return inputArray?.map((item) => ({
       idproduct: item._id,
@@ -83,10 +88,11 @@ const PaymentComponent = ({ products }) => {
 
   const newCart = transformData(localCartItems1);
   const totalPrice = products?.reduce((acc, product) => acc + product.price * product.quantity, 0);
-  localStorage.removeItem("previousURL2");
+  localStorage.removeItem('previousURL2');
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
+  // Lấy thông tin người dùng từ token
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -105,14 +111,108 @@ const PaymentComponent = ({ products }) => {
     }
   }, [dispatch]);
 
+  // Hàm tạo ID đơn hàng
   const generateOrderId = () => {
     const randomNumber = Math.floor(10000 + Math.random() * 90000);
     return `O${randomNumber}`;
   };
 
+  // Hàm thay đổi phương thức thanh toán
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
+    if (e.target.value === 'Chuyển Khoản') {
+      fetchMomoPaymentUrl(); // Gọi API Momo khi phương thức là "Chuyển Khoản"
+    } else {
+      setMomoPaymentUrl('');
+    }
   };
+  var accessKey = 'F8BBA842ECF85'; 
+  var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+  var orderInfo = 'pay with MoMo';
+  var partnerCode = 'MOMO';
+  var redirectUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b';
+  var ipnUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b';
+  var requestType = "payWithMethod";
+  var amount = '50000';
+  var orderId = partnerCode + new Date().getTime();
+  var requestId = orderId;
+  var extraData ='';
+  var paymentCode = 'T8Qii53fAXyUftPV3m9ysyRhEanUs9KlOPfHgpMR0ON50U10Bh+vZdpJU7VY4z+Z2y77fJHkoDc69scwwzLuW5MzeUKTwPo3ZMaB29imm6YulqnWfTkgzqRaion+EuD7FN9wZ4aXE1+mRt0gHsU193y+yxtRgpmY7SDMU9hCKoQtYyHsfFR5FUAOAKMdw2fzQqpToei3rnaYvZuYaxolprm9+/+WIETnPUDlxCYOiw7vPeaaYQQH0BF0TxyU3zu36ODx980rJvPAgtJzH1gUrlxcSS1HQeQ9ZaVM1eOK/jl8KJm6ijOwErHGbgf/hVymUQG65rHU2MWz9U8QUjvDWA==';
+  var orderGroupId ='';
+  var autoCapture =true;
+  var lang = 'vi';
+  // Hàm gọi API MomoCryptoJS 
+ 
+
+ 
+  
+  const fetchMomoPaymentUrl = async () => {
+    try {
+      // Thông tin API từ MoMo
+      const accessKey = 'F8BBA842ECF85';
+      const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+      const orderInfo = 'pay with MoMo';
+      const partnerCode = 'MOMO';
+      const redirectUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b';
+      const ipnUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b';
+      const requestType = "payWithMethod";
+      const amount = '50000';
+      const orderId = partnerCode + new Date().getTime();
+      const requestId = orderId;
+      const extraData = '';
+      const lang = 'vi';
+  
+      // Chuỗi cần ký
+      const rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType;
+      console.log("--------------------RAW SIGNATURE----------------")
+      console.log(rawSignature)
+  
+      // Tạo chữ ký bằng HMAC-SHA256
+      const signature = CryptoJS.HmacSHA256(rawSignature, secretKey).toString(CryptoJS.enc.Hex);
+      console.log("--------------------SIGNATURE----------------")
+      console.log(signature)
+  
+      // Dữ liệu yêu cầu gửi đi
+      const requestBody = JSON.stringify({
+        partnerCode: partnerCode,
+        partnerName: "Test",
+        storeId: "MomoTestStore",
+        requestId: requestId,
+        amount: amount,
+        orderId: orderId,
+        orderInfo: orderInfo,
+        redirectUrl: redirectUrl,
+        ipnUrl: ipnUrl,
+        lang: lang,
+        requestType: requestType,
+        autoCapture: true,
+        extraData: extraData,
+        orderGroupId: '',
+        signature: signature,  // Chữ ký
+      });
+  
+      // Gửi yêu cầu HTTP tới MoMo API
+      const response = await axios.post('https://test-payment.momo.vn/v2/gateway/api/create', requestBody, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+  
+      // Kiểm tra kết quả từ MoMo
+      if (response.data.resultCode === 0) {
+        // Lưu URL thanh toán vào state hoặc xử lý tiếp theo
+        console.log('Thanh toán thành công, URL:', response.data.payUrl);
+      } else {
+        console.error('Không thể tạo URL thanh toán MoMo');
+      }
+    } catch (error) {
+      console.error('Lỗi khi gọi API MoMo:', error);
+    }
+  };
+  
+
+  
+  
 
   const orderData = {
     id: generateOrderId(),
@@ -122,32 +222,28 @@ const PaymentComponent = ({ products }) => {
     address: user?.address,
     email: user?.email,
     description: orderNote,
-    status: "Chờ xử lý",
-    location: "",
+    status: 'Chờ xử lý',
+    location: '',
     products: newCart,
     paymentMethod: paymentMethod, // Lấy giá trị từ Radio button
-    paymentStatus: "Chưa Thanh Toán",
+    paymentStatus: 'Chưa Thanh Toán',
   };
-  console.log(orderNote)
-const navigate = useNavigate();
+
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
-    
-    if(!validateOrder(user?.username,user?.phoneNumber,user?.email,user?.address,  paymentMethod,products.length,orderNote )){
-      return;
-    }
+   
     e.preventDefault();
     try {
       const result = await dispatch(createOrder(orderData)).unwrap();
-      console.log("Order created successfully:", result);
-      message.success("Đặt hàng thành công!");
+      console.log('Order created successfully:', result);
+      message.success('Đặt hàng thành công!');
       setTimeout(() => {
-        navigate('/account');
-        window.location.reload();
+        //navigate('/account');
+        //window.location.reload();
       }, 3000); // Chuyển hướng sau 3 giây
-      
     } catch (err) {
-      console.error("Error creating order:", err);
-      alert("Failed to create order.");
+      console.error('Error creating order:', err);
+      alert('Failed to create order.');
     }
   };
 
@@ -166,7 +262,7 @@ const navigate = useNavigate();
             placeholder="Ghi chú đơn hàng (tùy chọn)"
             value={orderNote}
             onChange={(e) => setOrderNote(e.target.value)}
-            data-testid = "ghichu"
+            data-testid="ghichu"
           />
         </Space>
 
@@ -177,16 +273,23 @@ const navigate = useNavigate();
           style={{ width: '100%' }}
         >
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Radio value="Ship Cod" data-testid = "shipcod">Thanh toán khi nhận hàng (COD)</Radio>
-            <Radio value="Chuyển Khoản" data-testid = "chuyenkhoan">Thanh toán qua ngân hàng</Radio>
+            <Radio value="Ship Cod" data-testid="shipcod">Thanh toán khi nhận hàng (COD)</Radio>
+            <Radio value="Chuyển Khoản" data-testid="chuyenkhoan">Thanh toán qua Momo</Radio>
           </Space>
         </Radio.Group>
+
+        {momoPaymentUrl && (
+          <div>
+            <h3>Quét mã thanh toán Momo:</h3>
+            <QRCodeCanvas value={momoPaymentUrl} size={256} />
+          </div>
+        )}
       </FormSection>
 
       <OrderSummarySection>
         <OrderSummary title={`Đơn hàng (${products.length} sản phẩm)`}>
           {products.map((product) => (
-            <ProductDetails key={product.id}>
+            <ProductDetails key={product.id} style={{ borderBottom: '1px solid #ddd', paddingBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <ProductImageContainer>
                   <ProductImage src={product.image} alt={product.name} />
@@ -204,7 +307,7 @@ const navigate = useNavigate();
             <Link to="/cart" style={{ textDecoration: 'none' }}>
               <Button style={{ flex: 1 }}>Sửa giỏ hàng</Button>
             </Link>
-            <Button type="primary" style={{ flex: 1 }} onClick={handleSubmit} data-testid = "dat">
+            <Button type="primary" style={{ flex: 1 }} onClick={handleSubmit} data-testid="dat">
               ĐẶT HÀNG
             </Button>
           </Space>
@@ -220,4 +323,3 @@ const navigate = useNavigate();
 };
 
 export default PaymentComponent;
-

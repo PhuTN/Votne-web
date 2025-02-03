@@ -15,8 +15,8 @@ const ImageContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 220px;
-    height: 220px;
+    width: 190px;
+    height: 200px;
   }
   
 `;
@@ -50,6 +50,15 @@ const DiagonalText = styled.div`
   text-align: center;
   pointer-events: none;
   width: 230px;
+
+  @media (max-width: 1023px) {
+    font-size: 19px;
+   
+ }
+
+ @media (max-width: 768px) {
+  font-size: 19px;
+ }
 `;
 
 const CatagoryComponent = ({ src, text, url }) => {

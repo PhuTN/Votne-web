@@ -3,16 +3,32 @@ import { Button, Input } from 'antd'
 
 const SearchButton = styled.div`
 display: flex;
+
 `
- 
+export const VoiceIconButton = styled(Button)`
+margin-left: 8px;
+color: ${(props) => (props.className === 'listening' ? '#ff4d4f' : '#1890ff')};
+background-color: ${(props) =>
+  props.className === 'listening' ? '#fff1f0' : 'transparent'};
+border: none;
+box-shadow: none;
+&:hover {
+  color: #ff4d4f;
+  background-color: #fff1f0;
+}
+`;
 const SearchIconButton = styled(Button)`
     border-radius: 0 4px 4px 0; 
     border-left: 0;
 
-    &:hover{
-        color: #d9d9d9 ;
-        border-color: #d9d9d9 !important;
-    }
+    color: ${(props) => (props.className === 'listening' ? '#ff4d4f' : '#1890ff')};
+background-color: ${(props) =>
+  props.className === 'listening' ? '#fff1f0' : 'transparent'};
+
+&:hover {
+  color: #ff4d4f;
+  background-color: #fff1f0;
+}
 `
 
 const SearchInput = styled(Input) `

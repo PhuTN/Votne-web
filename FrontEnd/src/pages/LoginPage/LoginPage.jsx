@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Input, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ import { loginUser } from "../../redux/Slicer/authSlice"; // Đường dẫn ph�
 import { forgotPassword, resetPassword } from "../../redux/Slicer/userSlice"; // Đường dẫn phù hợp đến userSlice
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import ChatBot from "../../components/ChatBot/ChatBot";
+import { fetchProducts } from "../../redux/Slicer/productSlice";
 
 // Styled Components
 const Wrapper = styled.div`
@@ -134,8 +136,13 @@ const LoginPageComponent = () => {
           message.error("Email người dùng hoặc mật khẩu không đúng hoặc tài khoản bị khóa!");
         } else {
           localStorage.setItem("token", response.token);
+          
+
+          
           const decodedToken = jwtDecode(response.token);
-         
+          localStorage.setItem("wishlist", JSON.stringify(decodedToken.wishlist));
+
+          
           // dispatch(fetchCartByUserId(decodedToken?.userId)).then((action) => {
             //   if (action.payload) {
             //     localStorage.setItem("cart", JSON.stringify(action.payload));
@@ -157,6 +164,7 @@ const LoginPageComponent = () => {
       .then((response) => {
        
         localStorage.setItem("cart", JSON.stringify(response.data)); // Lưu vào localStorage
+        
       })
       .catch((error) => {
         console.error("Error fetching cart:", error);
@@ -196,7 +204,8 @@ const LoginPageComponent = () => {
     }
     
   };
-
+ 
+ 
   const handleForgotPasswordStep3 = () => {
     message.success("Đã gửi lại mã xác nhận!");
   }
@@ -311,6 +320,7 @@ const LoginPageComponent = () => {
       default:
         return (
           <div>
+          <ChatBot></ChatBot>
             <Title>ĐĂNG NHẬP</Title>
             <Divider />
             <StyledInput

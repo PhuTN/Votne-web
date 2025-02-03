@@ -22,6 +22,22 @@ const MainMenuComponent = () => {
     setMenuOpen(!isMenuOpen);
   };
 
+
+  const categories = [
+    "Vợt Cầu Lông",
+    "Áo Cầu Lông",
+    "Váy Cầu Lông",
+    "Quần Cầu Lông",
+    "Túi Vợt Cầu Lông",
+    "Phụ Kiện Cầu Lông",
+    "Balo Cầu Lông",
+  ];
+
+  const handleNavigation = (title) => {
+    // Loại bỏ chữ "Cầu Lông" khỏi tiêu đề
+    const formattedTitle = title.replace(" Cầu Lông", "");
+    navigate(`/product/${formattedTitle}`);
+  };
   return (
     <div>
       <MobileNavBar>
@@ -35,6 +51,7 @@ const MainMenuComponent = () => {
 
 
         <div className={`menu-items ${isMenuOpen ? "active" : ""}`}>
+       
         <SubMenu onClick={()=>navigate("/")}>
           <span>TRANG CHỦ</span>
         </SubMenu>
@@ -72,10 +89,14 @@ const MainMenuComponent = () => {
               </g>
             </svg>
           </div>
-          <ProductMenu id="productMenu">
-            <ProductMenuComponent />{" "}
-            {/* Di chuyển ra ngoài div chứa span và svg */}
-          </ProductMenu>
+          <NewMenu id="productMenu">
+          {categories.map((title, index) => (
+        <MenuItem2 key={index} onClick={() => handleNavigation(title)}>
+          <MenuSpan>{title}</MenuSpan>
+        </MenuItem2>
+      ))}
+
+          </NewMenu>
         </SubMenu>
 
         <SubMenu>
@@ -135,6 +156,7 @@ const MainMenuComponent = () => {
         </div>
       </MobileNavBar>
       <WrapperMenu justify="center" align="middle">
+      
         <SubMenu>
           <Link to="/" style={{ color: "white" }}>
             <span>TRANG CHỦ</span>
@@ -174,10 +196,14 @@ const MainMenuComponent = () => {
               </g>
             </svg>
           </div>
-          <ProductMenu id="productMenu">
-            <ProductMenuComponent />{" "}
-            {/* Di chuyển ra ngoài div chứa span và svg */}
-          </ProductMenu>
+          <NewMenu id="productMenu">
+          {categories.map((title, index) => (
+        <MenuItem2 key={index} onClick={() => handleNavigation(title)}>
+          <MenuSpan>{title}</MenuSpan>
+        </MenuItem2>
+      ))}
+
+          </NewMenu>
         </SubMenu>
 
         <SubMenu>

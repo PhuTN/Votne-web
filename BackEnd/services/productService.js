@@ -86,15 +86,32 @@ const getProductsByType = async (type) => {
 
 const searchProductsByName = async (searchTerm) => {
   try {
+    console.log("MA "+searchTerm)
+    // Kiểm tra nếu searchTerm rỗng hoặc chỉ chứa khoảng trắng
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      return [];  // Trả về mảng rỗng nếu searchTerm không hợp lệ
+    }
+
+    // Tách chuỗi tìm kiếm thành các từ khóa riêng biệt (ngắt bằng khoảng trắng)
+    const searchTerms = searchTerm.trim().toLowerCase().split(/\s+/);
+
+    // Tạo điều kiện tìm kiếm để tất cả từ khóa phải có trong tên sản phẩm
+    const searchConditions = searchTerms.map(term => ({
+      name: { $regex: term, $options: 'i' }  // Sử dụng regex để tìm kiếm không phân biệt chữ hoa chữ thường
+    }));
+
+    // Tìm sản phẩm thỏa mãn tất cả các điều kiện
     return await Product.find({
-      name: { $regex: searchTerm, $options: 'i' }, // Regex tìm kiếm
+      $and: searchConditions  // Đảm bảo tất cả từ khóa đều xuất hiện trong tên sản phẩm
     })
-      .select("-__v") // Loại bỏ trường '__v' khi trả về kết quả
-      .populate("attributeValues colors.inventory.attribute endows"); // Populate các liên kết
+      .select("-__v")
+      .populate("attributeValues colors.inventory.attribute endows");
   } catch (error) {
     throw new Error(`Error searching products: ${error.message}`);
   }
 };
+
+
 
 
 module.exports = {

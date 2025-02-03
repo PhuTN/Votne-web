@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataLayout } from './style';
-import { Col, Input, Row, Select, Table, Grid  } from 'antd';
+import { Col, Input, Row, Select, Table } from 'antd';
 
 const AdminTableComponent = ({
     title,
@@ -10,8 +10,7 @@ const AdminTableComponent = ({
     defaultValue,
     columns,
     onRowSelect,
-    data,
-    scroll
+    data
 }) => {
     const onSearch = () => {
         // Implement search functionality here
@@ -31,8 +30,6 @@ const AdminTableComponent = ({
                         onClick: () => onRowSelect(record), // Gọi hàm onRowSelect khi hàng được chọn
                     }) : undefined} // Chỉ định onRow nếu onRowSelect có sẵn
                     style={{ width: '100%', border: '0.1px solid #70d3f4', borderRadius: '9px', padding: '2px' }}
-                    
-
                     pagination={{
                         pageSize: 15,
                         showSizeChanger: false,

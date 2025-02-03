@@ -4,11 +4,26 @@ import InfoBlocksComponent from '../../components/HomePageC/InfoBlocksComponent/
 import ProductSliderComponent from '../../components/HomePageC/ProductSliderComponent/ProductSliderComponent'
 import Gallery from '../../components/HomePageC/CatagoryComponent/Galary'
 import RacketImage from '../../images/Racket.jpg';
+import Snecker from '../../images/sneker.jpg';
+import Shirt from '../../images/pngtree-geometric-square-with-light-bl.jpg';
+import Short from '../../images/short.jpg';
+import Bag from '../../images/bag.jpg';
+import Balo from '../../images/balo.jpg';
+import Bball from '../../images/bball.jpg';
+
+
+
+
+import pngtree from '../../images/pngtree-.jpg'
+ 
 import { AppContexts } from '../../contexts/AppContexts'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchRecentProducts, searchProductsByName } from '../../redux/Slicer/productSlice'
 import { jwtDecode } from 'jwt-decode'
 import { fetchCartByUserId } from '../../redux/Slicer/cartSlice'
+import ChatBot from '../../components/ChatBot/ChatBot'
+import ChatBot2 from '../../components/ChatBot/ChatBot2'
+
 const HomePage = () => {
 
   const slideImages = [
@@ -17,11 +32,11 @@ const HomePage = () => {
       caption: 'Slide 1'
     },
     {
-      url: 'https://cdn.shopvnb.com/img/1920x640/uploads/slider/ynx-eclp-banner_1695178004.webp',
+      url: 'https://cdn.shopvnb.com/img/1920x640/uploads/slider/banner-sale-12_1695182579.webp',
       caption: 'Slide 2'
     },
     {
-      url: 'https://cdn.shopvnb.com/img/1920x640/uploads/slider/ynx-eclp-banner_1695178004.webp',
+      url: 'https://cdn.shopvnb.com/img/1920x640/uploads/slider/astrox88-sd-key-visual-2880x1120-_1718650445.webp',
       caption: 'Slide 3'
     },
   ];
@@ -141,13 +156,13 @@ const HomePage = () => {
 
   const itemsArray = [
     { src: RacketImage, text: "Vợt Cầu Lông", key: "Vợt" },
-    { src: RacketImage, text: "Giày Cầu Lông", key: "Giày" },
-    { src: RacketImage, text: "Áo Cầu Lông", key: "Áo" },
-    { src: RacketImage, text: "Váy Cầu Lông", key: "Váy" },
-    { src: RacketImage, text: "Quần Cầu Lông", key: "Quần" },
-    { src: RacketImage, text: "Túi Vợt Cầu Lông", key: "Túi" },
-    { src: RacketImage, text: "Balo Cầu Lông", key: "Balo" },
-    { src: RacketImage, text: "Phụ Kiện Cầu Lông", key: "Phụ kiện" },
+    { src: Snecker, text: "Giày Cầu Lông", key: "Giày" },
+    { src: Shirt, text: "Áo Cầu Lông", key: "Áo" },
+    { src: pngtree, text: "Váy Cầu Lông", key: "Váy" },
+    { src: Short, text: "Quần Cầu Lông", key: "Quần" },
+    { src: Bag, text: "Túi Vợt Cầu Lông", key: "Túi" },
+    { src: Balo, text: "Balo Cầu Lông", key: "Balo" },
+    { src: Bball, text: "Phụ Kiện Cầu Lông", key: "Phụ kiện" },
   ];
 
 
@@ -185,7 +200,8 @@ const HomePage = () => {
   return (
 
     <div>
-
+      <ChatBot></ChatBot>
+      <ChatBot2></ChatBot2>
       <SlideShowComponent slideImages={slideImages} />
       <InfoBlocksComponent></InfoBlocksComponent>
       <div style={{margin: '0 15px'}}>

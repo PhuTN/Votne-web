@@ -13,29 +13,22 @@ const FooterContainer = styled.div`
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
-    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 20px;
     gap: 50px;
 
-    @media (max-width: 450px) {
-      flex-direction: column;
-      gap: 5px;
-      
-      width: 100%;
-    }
-
     @media (max-width: 768px) {
-    width: 100%;
-    flex-direction: column;
-      gap: 10px;
-      
+      flex-wrap: wrap; /* Cho phép các cột xuống dòng */
+      justify-content: center; /* Căn giữa các cột */
+      gap: 20px; /* Giảm khoảng cách giữa các cột */
     }
   }
 
   .footer-column {
     flex: 1;
-
+    min-width: 200px;
+    max-width: 300px;
     color: white;
 
     h3 {
@@ -44,6 +37,10 @@ const FooterContainer = styled.div`
       font-size: 16px;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
+
+      @media (max-width: 768px) {
+        font-size: 14px; /* Thu nhỏ tiêu đề trên tablet */
+      }
     }
 
     p, a {
@@ -51,6 +48,10 @@ const FooterContainer = styled.div`
       margin: 0;
       line-height: 1.6;
       font-size: 14px;
+
+      @media (max-width: 768px) {
+        font-size: 12px; /* Giảm kích thước chữ trên tablet */
+      }
     }
 
     a {
@@ -63,53 +64,30 @@ const FooterContainer = styled.div`
     }
 
     .highlight {
-      color: #ffffff; /* Màu trắng cho chữ highlight */
+      color: #ffffff;
       font-weight: bold;
     }
 
     .highlight-orange {
-      color: #ff6600; /* Màu cam cho chữ cần nhấn mạnh */
+      color: #ff6600;
       font-weight: bold;
-    }
-
-    @media (max-width: 450px) {
-      min-width: 100%;
-      max-width: none;
-      margin-bottom: 5px;
-      padding-left: 15px;
-      h3 {
-        font-size: 14px;
-      }
-      p {
-        font-size: 12px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      min-width: 90%;
-      max-width: 95%;
-      margin-bottom: 10px;
-            padding-left: 15px;
-
-      h3 {
-        font-size: 14px; 
-      }
-      p {
-        font-size: 12px; 
-      }
     }
   }
 
   .footer-bottom {
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: center;
     align-items: center;
     text-align: center;
     padding-top: 20px;
     font-size: 12px;
     gap: 5px;
-    background-color: #1DA0F1;
+
+    @media (max-width: 768px) {
+      font-size: 10px; /* Thu nhỏ kích thước chữ dưới màn hình nhỏ */
+      padding-top: 15px;
+    }
 
     p {
       color: black;
@@ -126,23 +104,28 @@ const FooterContainer = styled.div`
         &:hover {
           color: #ff6600;
         }
+
+        @media (max-width: 768px) {
+          font-size: 14px; /* Giảm kích thước icon trên tablet */
+        }
       }
     }
+  }
 
-    /* For screens with width <= 450px */
-    @media (max-width: 450px) {
+  /* Responsive cho mobile */
+  @media (max-width: 480px) {
+    .footer-columns {
+      flex-direction: column; /* Đưa tất cả các cột xuống thành một cột */
+      align-items: center; /* Căn giữa cột */
+    }
+
+    .footer-column {
+      min-width: 100%; /* Đặt chiều rộng tối đa cho mobile */
+      text-align: center; /* Căn giữa nội dung trong cột */
+    }
+
+    .footer-bottom {
       padding-top: 10px;
-      p {
-        font-size: 10px;
-      }
-    }
-
-    /* For screens with width between 450px and 768px */
-    @media (max-width: 768px) {
-      padding-top: 15px; /* Adjust padding-top for medium screens */
-      p {
-        font-size: 11px; /* Adjust font-size */
-      }
     }
   }
 `;

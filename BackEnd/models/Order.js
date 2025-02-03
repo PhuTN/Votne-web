@@ -36,6 +36,7 @@ const orderSchema = new mongoose.Schema(
         idattributevalue: { type: mongoose.Schema.Types.ObjectId, ref: "AttributeValue", required: true }, // Tham chiếu đến AttributeValue
         price: { type: Number, required: true }, // Giá sản phẩm
         number: { type: Number, required: true }, // Số lượng sản phẩm
+        review: { type: mongoose.Schema.Types.ObjectId, ref: "Review", default: null } // Thêm tham chiếu đến một review, mặc định là null
       }
     ],
   },

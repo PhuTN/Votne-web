@@ -31,6 +31,8 @@ export const fetchProductsByType = createAsyncThunk(
   }
 );
 
+
+
 // Async action để gọi API lấy sản phẩm theo id
 export const fetchProductById = createAsyncThunk(
   "products/fetchProductById",
@@ -101,7 +103,17 @@ export const createProduct = createAsyncThunk(
     }
   }
 );
-
+export const fetchProducts = createAsyncThunk(
+  "products/fetchProducts",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get("http://localhost:8081/api/products");
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 const productSlice = createSlice({
   name: "products",
   initialState: {
@@ -116,6 +128,18 @@ const productSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    .addCase(fetchProducts.pending, (state) => {
+      state.status = "loading";
+      state.error = null;
+    })
+    .addCase(fetchProducts.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      state.products = action.payload;
+    })
+    .addCase(fetchProducts.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    })
       // Xử lý fetchRecentProducts
       .addCase(fetchRecentProducts.pending, (state) => {
         state.status = "loading";

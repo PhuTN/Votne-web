@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Input, Select, DatePicker, Form, Typography, Row, Col, message } from 'antd';
+import { Button, Input, Select, DatePicker, Form, Typography, Row, Col, message, Card, Upload, notification } from 'antd';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserById, updateUser, updatePassword } from '../../../redux/Slicer/userSlice';
 import moment from 'moment';
 import {validateUserInfoModule} from "../../../modules/validateUserInfoModule"
-
+import { uploadFile } from '../../../redux/Slicer/uploadSlice';
+import { PlusOneOutlined } from '@mui/icons-material';
 const { Title } = Typography;
 
 const Container = styled.div`
@@ -95,6 +96,7 @@ const validateBirthDay = (birthDay) => {
 
 
 const AccountInfoComponent = () => {
+  const [uploadedImage, setUploadedImage] = useState(null); // State to store uploaded image URL
   const [form] = Form.useForm(); // Sử dụng form instance của Ant Design
   const [passwordForm] = Form.useForm(); // Form cho phần đổi mật khẩu
   const dispatch = useDispatch();
@@ -103,6 +105,7 @@ const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false); // Để kiểm soát trạng thái loading khi cập nhật
   const [loadingPassword, setLoadingPassword] = useState(false); // Để kiểm soát trạng thái loading khi đổi mật khẩu
   const { user, status, error } = useSelector((state) => state.user);
+  console.log("MAAAAAA",user)
   // Gọi API lấy thông tin user khi load trang
   useEffect(() => {
     const token = localStorage.getItem('token'); 
@@ -144,31 +147,11 @@ const [errorMessage, setErrorMessage] = useState('');
 
 
       const usernameError = validateUsername(values.username);
-  if (usernameError) {
-    setErrorMessage(usernameError)
-    return;
-  }
-
+  
   
   const  phoneError = validatePhonenumber(values.phoneNumber);
-  if(phoneError){
-    setErrorMessage(phoneError)
-    return;
-  }
-  const addressError = validateAddress(values.address);
-  if(addressError){
-    setErrorMessage(addressError)
-    return;
-  }
-
-  const birthError = validateBirthDay(values.dateOfBirth);
-  if(birthError){
-    setErrorMessage(birthError)
-    return;
-  }
-  if(!validateUserInfoModule(values.username,values.phoneNumber,user.email,values.address,values.dateOfBirth,values.gender) ){
-    return;
-  }
+  
+  
   
   
       if (userId) {
@@ -183,6 +166,7 @@ const [errorMessage, setErrorMessage] = useState('');
           // Đảm bảo password được xử lý đúng (nếu có thay đổi)
           password: user?.password , // Nếu không có thay đổi thì giữ nguyên
           address: values.address || user?.address || "", // Địa chỉ
+           avatar: uploadedImage || ""
         };
   
         // Gửi thông tin cập nhật tới API
@@ -234,6 +218,36 @@ const [errorMessage, setErrorMessage] = useState('');
     }
   };
 console.log(user)
+
+const handleImageUpload = async (options) => {
+  const { file, onSuccess, onError } = options;
+
+  try {
+    // Dispatch action upload file từ Redux slice
+    const response = await dispatch(uploadFile(file));
+
+    // Lấy URL từ dữ liệu trả về
+    const uploadedFileUrl = response.payload.data.path;
+    console.log('URL ảnh đã upload:', uploadedFileUrl);
+
+    // Hiển thị thông báo thành công
+    notification.success({
+      message: 'Upload thành công!',
+      description: 'Ảnh đã được tải lên Cloudinary.',
+    });
+
+    // Cập nhật lại ảnh đã tải lên (thay thế ảnh cũ nếu có)
+    setUploadedImage(uploadedFileUrl); // Cập nhật state với URL ảnh mới
+
+    onSuccess();
+  } catch (error) {
+    notification.error({
+      message: 'Upload thất bại!',
+      description: error.message,
+    });
+    onError(error);
+  }
+};
   return (
     <Container>
       <Title level={3}>Thông tin tài khoản</Title>
@@ -278,6 +292,35 @@ console.log(user)
             </Form.Item>
           </Col>
         </Row>
+        <Card title="Avartar" bordered>
+            <Upload
+              style={{ marginBottom: "10px" }}
+              customRequest={handleImageUpload}
+              showUploadList={false}
+              accept="image/*"
+            //  beforeUpload={() => !uploadedImage} // Không cho phép tải ảnh nếu đã có ảnh
+            >
+              <Button icon={<PlusOneOutlined />} data-testid="inputanh">
+                Tải lên avatar
+              </Button>
+            </Upload>
+
+            {
+  (uploadedImage || user?.avatar) && (
+    <div style={{ marginTop: 10 }}>
+      <p>Ảnh đã tải lên:</p>
+      <img
+        src={uploadedImage || user.avatar }  // Nếu có uploadedImage, sử dụng nó; nếu không, dùng user.avatar
+        alt="Avatar"
+        style={{ width: 150, height: 150, objectFit: 'cover' }}
+      />
+    </div>
+  )
+}
+
+
+            
+          </Card>
         {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
         <StyledButton 
           type="primary" 
@@ -289,7 +332,7 @@ console.log(user)
        
       </Form>
 
-      {/* <Title level={4} style={{ marginTop: '30px' }}>Đổi mật khẩu</Title>
+      <Title level={4} style={{ marginTop: '30px' }}>Đổi mật khẩu</Title>
       <Form form={passwordForm} layout="vertical">
         <Form.Item 
           label="Mật khẩu hiện tại" 
@@ -316,7 +359,7 @@ console.log(user)
         >
           ĐỔI MẬT KHẨU
         </StyledButton>
-      </Form> */}
+      </Form>
     </Container>
   );
 };

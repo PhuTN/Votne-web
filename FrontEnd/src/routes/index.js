@@ -11,6 +11,9 @@ import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductPage from "../pages/ProductPage/ProductPage";
 import SigninPage from "../pages/SigninPage/SigninPage";
+import SearchPage from "../pages/SearchPage/SearchPage"
+import WishlistPage from "../pages/WishlistPage/WishlistPage"
+
 export const routes = [
   {
     path: '/',
@@ -21,6 +24,18 @@ export const routes = [
   {
     path: '/product/:type',
     page: ProductPage,
+    isShowHeader: true,
+    isProtected: false,
+  },
+  {
+    path: '/search/:keyword',
+    page: SearchPage,
+    isShowHeader: true,
+    isProtected: false,
+  },
+  {
+    path: '/wishlist',
+    page: WishlistPage,
     isShowHeader: true,
     isProtected: false,
   },

@@ -16,6 +16,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAttributesByType } from '../../redux/Slicer/attributeSlice';
 import { fetchProductsByType } from '../../redux/Slicer/productSlice';
+import ChatBot from '../../components/ChatBot/ChatBot';
+import ChatBot2 from '../../components/ChatBot/ChatBot2';
+import { Slider } from 'antd';
+
 const PageContainer = styled.div`
   display: flex;
   padding: 16px;
@@ -24,15 +28,43 @@ const PageContainer = styled.div`
 `;
 
 const Sidebar = styled.div`
-  flex: 0 0 300px; /* Fixed width for sidebar */
+  flex: 0 0 300px;
   margin-right: 16px;
+  transition: all 0.3s ease-in-out;
 
+  @media (max-width: 1247px) {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    overflow-y: scroll;
+    background: white; /* Thêm nền để tránh bị trùng với nội dung */
+    padding: 10px;
+    //width: 300px; /* Giữ nguyên chiều rộng */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng đổ bóng */
+  }
 `;
 
 const Content = styled.div`
   flex: 1; /* Takes the remaining width for content */
 `;
+const FilterContainer = styled.div`
+  margin-bottom: 16px;
+  width:260px;
+  padding: 5px 10px 10px 10px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+`;
 
+const RangeContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+`;
 const Overlay = styled.div`
   position: fixed; /* Sit on top of the page content */
   width: 100%; /* Full width (cover the whole page) */
@@ -65,12 +97,65 @@ const FilterBtn = styled.div`
     display: none;
   }
 `;
+const StarFilterContainer = styled.div`
+ width:260px;
+  margin-top: 16px;
+  padding: 5px 10px 10px 10px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+`;
+
+const StarButton = styled.button`
+  background: ${(props) => (props.active ? "#1DA0F1" : "#f0f0f0")};
+  color: black;
+  border: none;
+  padding: 8px 12px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  
+  &:hover {
+    background: #1DA0F1;
+  }
+  span {
+    //color: #FFD700; /* Màu vàng cho ngôi sao */
+color: ${(props) => (props.active ? "black" : "#FFD700")};
+    font-weight: bold;
+  }
+`;
+
+const StarFilter = ({ selectedRating, setSelectedRating }) => {
+  const handleStarClick = (rating) => {
+    setSelectedRating(rating === selectedRating ? null : rating);
+  };
+
+  return (
+    <StarFilterContainer>
+      <h3>Đánh giá</h3>
+      {[5, 4, 3, 2, 1].map((star) => (
+        <StarButton 
+          key={star} 
+          active={selectedRating === star} 
+          onClick={() => handleStarClick(star)}
+        >
+          {star} <span>★</span>
+        </StarButton>
+      ))}
+      <StarButton active={selectedRating === null} onClick={() => setSelectedRating(null)}>
+        Tất cả
+      </StarButton>
+    </StarFilterContainer>
+  );
+};
 
 
 const ProductPage = () => {
   const [isShowSideBar, setIsShowSideBar] = useState(window.innerWidth > 1247 ? true : false)
   const [isShowOverlay, setIsShowOverlay] = useState(false)
   const sideBarEle = useRef(null)
+  const [selectedRating, setSelectedRating] = useState(null); // Mặc định không lọc theo sao
 
   useEffect(() => {
     const handleWindowResize = () => {
@@ -79,6 +164,8 @@ const ProductPage = () => {
         setIsShowSideBar(true)
 
         sideBarEle.current.style.position = "static"
+        sideBarEle.current.style.overflowY = "hidden";
+
       } else {
         setIsShowSideBar(false)
 
@@ -166,11 +253,33 @@ const ProductPage = () => {
     }))
     .filter(attr => attr.values.length > 0); // Loại bỏ các attribute không có value nào active
 
+const [priceRange, setPriceRange] = useState([0, 10000000]);
+const handlePriceChange = (value) => {
+  setPriceRange(value);
+};
+const filteredProducts = productNew
+  .filter(product => {
+    const price = product.colors[0].discountPrice;
+    return price >= priceRange[0] && price <= priceRange[1];
+  })
+  .filter(product => {
+    if (selectedRating === null) return true; // Nếu không chọn sao nào, hiển thị tất cả sản phẩm
+    return product.rating >= selectedRating && product.rating < selectedRating + 1;
+  });
 
+
+console.log(filteredProducts)
   return (
     <div>
-      <CustomBreadcrumb items={breadcrumbItems} />
-      <div>
+    <ChatBot></ChatBot>
+                 <ChatBot2></ChatBot2>
+    
+    <div style={{backgroundColor:"rgb(245, 245, 245)"}}>
+      <div style={{maxWidth: '1200px', margin:' 0 auto' }}>
+      <CustomBreadcrumb   items={breadcrumbItems} />
+      </div>
+      </div>
+      <div style={{maxWidth: '1200px', margin:' 0 auto' }}>
 
         <PageContainer>
           {
@@ -191,13 +300,33 @@ const ProductPage = () => {
           {/* Sidebar */}
 
           <Sidebar ref={sideBarEle} style={{ display: `${isShowSideBar ? 'block' : 'none'}` }}>
-            <FilterSideBarComponent filters={filteredAttributes} typeNe={type} />
-          </Sidebar>
+  <FilterContainer>
+  <h3>Giá</h3>
+    <Slider
+      range
+      min={0}
+      max={10000000}
+      step={50000}
+      defaultValue={priceRange}
+      onChange={handlePriceChange}
+    />
+    <RangeContainer>
+      <span>Tối thiểu: {priceRange[0].toLocaleString()} đ</span>
+      <span>Tối đa: {priceRange[1].toLocaleString()} đ</span>
+    </RangeContainer>
+  </FilterContainer>
+
+  {/* Bộ lọc sao */}
+  <StarFilter selectedRating={selectedRating} setSelectedRating={setSelectedRating} />
+
+  <FilterSideBarComponent filters={filteredAttributes} typeNe={type} />
+</Sidebar>
+
 
 
           {/* Main Content */}
           <Content>
-            <ProductGridComponent title={type} products={productNew} />
+            <ProductGridComponent title={type} products={filteredProducts} />
           </Content>
         </PageContainer>
       </div>

@@ -29,13 +29,13 @@ const SubMenu = styled.div`
   @media screen and (min-width: 768px) and (max-width: 1024px) {
     margin-left: 10px;
     margin-right: 10px;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
     
   }
  @media screen and (max-width: 768px) {
     margin: 0; /* Bỏ margin để tiết kiệm không gian */
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 500;
   font-weight: 450;
     padding: 10px; /* Thêm khoảng cách cho vùng bấm */
@@ -86,7 +86,7 @@ export const MobileNavBar = styled.div`
 
 .menu-toggle {
   cursor: pointer;
-  font-size: 40px;
+  font-size: 20px;
   color: white;
   transition: color 0.3s ease, transform 0.2s ease;
 
@@ -100,7 +100,7 @@ export const MobileNavBar = styled.div`
 
   &.active::before {
     content: "✖";
-    font-size: 35px;
+    font-size: 25px;
   }
 
   &.active:hover {
@@ -192,7 +192,7 @@ const NewMenu = styled(Menu)`
   /* Màu nền menu */
 
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 1); /* Đổ bóng cho menu */
-  z-index: 10;
+  z-index: 9999; 
 
   opacity: 0;
   transition: opacity 0.3s ease; /* Thêm hiệu ứng chuyển tiếp */

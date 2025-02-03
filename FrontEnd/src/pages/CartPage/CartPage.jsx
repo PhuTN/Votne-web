@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import CartComponent from "../../components/CartPageC/CartComponent/CartComponent";
 import CustomBreadcrumb from "../../components/Others/CustomBreadScumb/CustomBreadScumb";
+import ChatBot from "../../components/ChatBot/ChatBot";
+import ChatBot2 from "../../components/ChatBot/ChatBot2";
+
 
 const CartPage = () => {
     const breadcrumbItems = [
@@ -29,8 +32,13 @@ const CartPage = () => {
 
     return (
         <div>
-            <CustomBreadcrumb items={breadcrumbItems} />
-        
+           <div style={{backgroundColor:"rgb(245, 245, 245)"}}>
+      <div style={{maxWidth: '1200px', margin:' 0 auto' }}>
+      <CustomBreadcrumb   items={breadcrumbItems} />
+      </div>
+      </div>
+            <ChatBot></ChatBot>
+             <ChatBot2></ChatBot2>
             <div style={{
                 maxWidth: '1200px', 
                 margin: '0 auto'

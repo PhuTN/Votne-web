@@ -276,6 +276,7 @@ const AdminManageAccount = () => {
             gap: '8px',
           }}>
             <Select
+             style={{ width: 150 }}
   defaultValue={orderCategories[0].value}
   onChange={handleCategoryChange}
   data-testid="category-select"

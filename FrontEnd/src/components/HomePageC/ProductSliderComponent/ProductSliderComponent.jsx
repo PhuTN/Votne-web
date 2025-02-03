@@ -34,12 +34,29 @@ const SliderContainer = styled.div`
   border-radius: 10px;
 
   .ant-card {
-    margin: 5px;
-    padding: 10px;
-    width: 225px;
-    height: 280px;
-    position: relative;
+  margin: 5px;
+  padding: 10px;
+  width: 225px; /* Kích thước mặc định */
+  height: 280px;
+  position: relative;
+}
+
+
+
+@media (max-width: 768px) {
+  .ant-card {
+    width: 210px; /* Thu nhỏ thêm khi màn hình có độ phân giải <= 464px */
+    height: 250px;
   }
+}
+
+@media (max-width: 464px) {
+  .ant-card {
+    width: 180px; /* Thu nhỏ thêm khi màn hình có độ phân giải <= 464px */
+    height: 240px;
+  }
+}
+
 
   .ant-card-cover img {
     width: 100%;
@@ -84,6 +101,15 @@ const CenteredSpan = styled.span`
   color: #1DA0F1;
   margin: 50px 0 30px 0;
   font-weight: bold;
+
+  @media (max-width: 1023px) {
+    font-size: 25px;
+   
+ }
+
+ @media (max-width: 768px) {
+  font-size: 25px;
+ }
 `;
 
 const DiscountBadge = styled.span`

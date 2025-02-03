@@ -17,10 +17,12 @@ const ImageGrid = styled.div`
   max-width: 1500%;
 
   @media (max-width: 1023px) {
+   
     grid-template-columns: repeat(3, 1fr);
   }
 
   @media (max-width: 768px) {
+    gap: 15px;
     grid-template-columns: repeat(2, 1fr);
   }
 `;
@@ -33,7 +35,17 @@ const CenteredSpan = styled.span`
   color: #1DA0F1;
   margin: 50px 0 30px 0;
   font-weight: bold;
+
+  @media (max-width: 1023px) {
+    font-size: 25px;
+   
+ }
+
+ @media (max-width: 768px) {
+  font-size: 25px;
+ }
 `;
+
 
 const Gallery = ({ itemsArray }) => {
   return (

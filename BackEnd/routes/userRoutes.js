@@ -119,6 +119,8 @@ router.post("/addStaff", async (req, res) => {
 
 
 // POST /api/users/verify
+const Cart = require("../models/Cart"); // Import model Cart
+
 router.post("/verify", async (req, res) => {
   const { email, verificationCode } = req.body;
 
@@ -130,7 +132,7 @@ router.post("/verify", async (req, res) => {
     }
 
     // Tạo người dùng mới từ dữ liệu lưu trữ
-    const {id, username, password, phoneNumber, address, gender, dateOfBirth } = storedData.userData;
+    const { id, username, password, phoneNumber, address, gender, dateOfBirth } = storedData.userData;
 
     const newUser = new User({
       id,
@@ -146,10 +148,19 @@ router.post("/verify", async (req, res) => {
 
     await newUser.save();
 
+    // Tạo giỏ hàng cho người dùng mới
+    const newCart = new Cart({ 
+      id: `cart_${Date.now()}_${Math.floor(Math.random() * 100000)}`, // ID ngẫu nhiên
+      iduser: newUser._id, 
+      products: [], 
+    });
+
+    await newCart.save();
+
     // Xóa mã xác thực sau khi sử dụng
     verificationCodes.delete(email);
 
-    res.status(201).json({ message: "Tài khoản đã được xác thực và tạo thành công!" });
+    res.status(201).json({ message: "Tài khoản đã được xác thực và tạo thành công!", userId: newUser._id, cartId: newCart._id });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Lỗi khi xác thực tài khoản." });
@@ -158,14 +169,16 @@ router.post("/verify", async (req, res) => {
 
 
 
+
 // POST /api/users/resend-code
 router.post("/resend-code", async (req, res) => {
   const { email } = req.body;
-
+  console.log("hello")
   try {
     // Kiểm tra người dùng tồn tại và chưa kích hoạt
     const user = await User.findOne({ email });
     if (!user || user.isActive) {
+      console.log("MA")
       return res.status(400).json({ message: "Email không tồn tại hoặc tài khoản đã được kích hoạt." });
     }
 
@@ -329,7 +342,30 @@ router.put("/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Failed to update user" });
   }
 });
+router.put("/:id/wishlist",async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { wishList } = req.body; // Nhận danh sách sản phẩm yêu thích từ request body
+    console.log(userId,wishList)
+    // Kiểm tra xem người dùng có tồn tại không
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    // Kiểm tra quyền cập nhật (chỉ chủ tài khoản hoặc admin mới có thể chỉnh sửa)
+    
+
+    // Cập nhật danh sách sản phẩm yêu thích
+    user.wishList = wishList;
+    await user.save();
+
+    res.status(200).json({ message: "WishList updated successfully", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update wishList", error: err.message });
+  }
+});
 /**
  * @swagger
  * /api/users/{id}/password:

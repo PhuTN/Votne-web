@@ -22,7 +22,7 @@ const getOrdersByUserId = async (userId) => {
 
 async function getOrderById(orderId) {
     // Thay thế bằng truy vấn cơ sở dữ liệu hoặc logic xử lý tương ứng
-    return Order.findById(orderId).populate("products.idproduct").populate("products.idattributevalue"); // Giả sử bạn sử dụng Mongoose
+    return Order.findById(orderId).populate("products.idproduct").populate("products.idattributevalue").populate("products.review"); // Giả sử bạn sử dụng Mongoose
   }
 
 

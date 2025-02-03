@@ -192,6 +192,27 @@ export const addStaff = createAsyncThunk(
   }
 );
 
+export const updateWishlist = createAsyncThunk(
+  "user/updateWishlist",
+  async ({ userId, wishList }, thunkAPI) => {
+    try {
+      console.log("LSDJFLJDLLDSLSDJFLJDLLDS",userId,wishList)
+      const token = getAuthToken();
+      const response = await axios.put(
+        `http://localhost:8081/api/users/${userId}/wishlist`,
+        { wishList },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Thêm token vào header
+          },
+        }
+      );
+      return response.data; // Trả về dữ liệu user sau khi cập nhật wishlist
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
 // Slice để quản lý trạng thái của người dùng
 const userSlice = createSlice({
@@ -211,6 +232,18 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    .addCase(updateWishlist.pending, (state) => {
+      state.status = "loading";
+      state.error = null;
+    })
+    .addCase(updateWishlist.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      state.user = action.payload.user; // Cập nhật user với danh sách wishlist mới
+    })
+    .addCase(updateWishlist.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.payload; // Lưu lỗi nếu có
+    })
     .addCase(addStaff.pending, (state) => {
       state.addStaffStatus = "loading"; 
       state.addStaffError = null;

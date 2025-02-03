@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 
 const productService = require("../services/productService");
 const Product = require("../models/Product");
+const Review = require("../models/Review");
 const router = express.Router();
 
 /**
@@ -42,9 +43,42 @@ router.get("/by-type", async (req, res) => {
   }
 
   try {
+    // Lấy sản phẩm theo type
     const products = await productService.getProductsByType(type);
-    res.status(200).json(products);
+    
+    if (products.length === 0) {
+      return res.status(200).json([]); // Trả về danh sách rỗng nếu không có sản phẩm nào
+    }
+
+    // Lấy danh sách productId từ các sản phẩm
+    const productIds = products.map((product) => product._id);
+
+    // Lấy rating trung bình từ bảng Review
+    const reviews = await Review.aggregate([
+      { $match: { productId: { $in: productIds } } },
+      { 
+        $group: {
+          _id: "$productId",
+          avgRating: { $avg: "$star" }
+        }
+      }
+    ]);
+
+    // Chuyển đổi review thành object { productId: avgRating }
+    const ratingMap = {};
+    reviews.forEach((review) => {
+      ratingMap[review._id.toString()] = review.avgRating;
+    });
+
+    // Gắn rating vào mỗi product
+    const productsWithRating = products.map((product) => ({
+      ...product.toObject(),
+      rating: ratingMap[product._id.toString()] ?? -1, // Nếu không có review thì -1
+    }));
+
+    res.status(200).json(productsWithRating);
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 });
@@ -175,7 +209,37 @@ router.post(
 router.get("/", async (req, res) => {
   try {
     const products = await productService.getAllProducts();
-    res.status(200).json(products);
+    if (products.length === 0) {
+      return res.status(200).json([]); // Trả về danh sách rỗng nếu không có sản phẩm nào
+    }
+
+    // Lấy danh sách productId từ các sản phẩm
+    const productIds = products.map((product) => product._id);
+
+    // Lấy rating trung bình từ bảng Review
+    const reviews = await Review.aggregate([
+      { $match: { productId: { $in: productIds } } },
+      { 
+        $group: {
+          _id: "$productId",
+          avgRating: { $avg: "$star" }
+        }
+      }
+    ]);
+
+    // Chuyển đổi review thành object { productId: avgRating }
+    const ratingMap = {};
+    reviews.forEach((review) => {
+      ratingMap[review._id.toString()] = review.avgRating;
+    });
+
+    // Gắn rating vào mỗi product
+    const productsWithRating = products.map((product) => ({
+      ...product.toObject(),
+      rating: ratingMap[product._id.toString()] ?? -1, // Nếu không có review thì -1
+    }));
+
+    res.status(200).json(productsWithRating);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -341,7 +405,40 @@ router.get("/search", async (req, res) => {
   try {
     // Nếu có từ khóa tìm kiếm, gọi service để tìm sản phẩm
     const products = await productService.searchProductsByName(search.trim());
-    res.status(200).json(products);
+
+    if (products.length === 0) {
+      return res.status(200).json([]); // Trả về danh sách rỗng nếu không có sản phẩm nào
+    }
+
+    // Lấy danh sách productId từ các sản phẩm
+    const productIds = products.map((product) => product._id);
+
+    // Lấy rating trung bình từ bảng Review
+    const reviews = await Review.aggregate([
+      { $match: { productId: { $in: productIds } } },
+      { 
+        $group: {
+          _id: "$productId",
+          avgRating: { $avg: "$star" }
+        }
+      }
+    ]);
+
+    // Chuyển đổi review thành object { productId: avgRating }
+    const ratingMap = {};
+    reviews.forEach((review) => {
+      ratingMap[review._id.toString()] = review.avgRating;
+    });
+
+    // Gắn rating vào mỗi product
+    const productsWithRating = products.map((product) => ({
+      ...product.toObject(),
+      rating: ratingMap[product._id.toString()] ?? -1, // Nếu không có review thì -1
+    }));
+
+    res.status(200).json(productsWithRating);
+    
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

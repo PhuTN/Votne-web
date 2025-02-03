@@ -203,7 +203,7 @@ const OrderDetailComponent = ({ personalInfo, orderData }) => {
           </InfoItem>
           <ButtonContainer>
             {decodedToken.role === "Customer" &&
-              personalInfo.status !== "Đã hủy" && (
+              personalInfo.status !== "Đã hủy" && personalInfo.status !== "Đã giao"  && (
                 <EditButton data-testid="huy" onClick={showModal}>
                   Hủy
                 </EditButton>
@@ -215,7 +215,8 @@ const OrderDetailComponent = ({ personalInfo, orderData }) => {
       <OrderContainer>
         <Header>SẢN PHẨM</Header>
         <InfoSection>
-          <OrderProduct orderData2={orderData} />
+          <OrderProduct orderData2={orderData} orderId={personalInfo.order_Id} 
+iduser = {personalInfo.iduser} />
         </InfoSection>
       </OrderContainer>
 
@@ -235,6 +236,8 @@ const OrderDetailComponent = ({ personalInfo, orderData }) => {
           data-testid="liDo"
         />
       </Modal>
+
+     
     </AccountInfoWrapper>
   );
 };

@@ -80,6 +80,7 @@ const extractProductDetails = (products) => {
 
     const removeItem = (id) => {
         const newCartItems = cartItems.filter(item => item.id !== id);
+        console.log("NEWWWWW",id)
         setCartItems(newCartItems);
     };
 
@@ -98,7 +99,7 @@ const extractProductDetails = (products) => {
             window.removeEventListener("storage", handleStorageChange);
         };
     }, []);
-   
+   console.log(cartItems)
     return (
         <CartContainer>
             <CartHeader>GIỎ HÀNG </CartHeader>

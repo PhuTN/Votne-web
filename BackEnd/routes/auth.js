@@ -142,7 +142,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id, username: user.username, role: user.role },
+      { userId: user._id, username: user.username, role: user.role ,wishlist: user.wishList},
       process.env.JWT_SECRET, // Sử dụng một khóa bảo mật trong file .env
       { expiresIn: '1h' }
     );
