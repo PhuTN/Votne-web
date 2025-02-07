@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Input, Select, DatePicker, Form, Typography, Row, Col, message, Card, Upload, notification } from 'antd';
+import { Button, Input, Select, DatePicker, Form, Typography, Row, Col, message, Card, Upload, notification, Modal } from 'antd';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserById, updateUser, updatePassword } from '../../../redux/Slicer/userSlice';
@@ -8,6 +8,10 @@ import moment from 'moment';
 import {validateUserInfoModule} from "../../../modules/validateUserInfoModule"
 import { uploadFile } from '../../../redux/Slicer/uploadSlice';
 import { PlusOneOutlined } from '@mui/icons-material';
+import TextArea from 'antd/es/input/TextArea';
+import { EnvironmentOutlined } from '@ant-design/icons';
+import LocationPicker from '../../locationPicker/LocationPicker';
+import { createLocation } from '../../../redux/Slicer/locationSlice';
 const { Title } = Typography;
 
 const Container = styled.div`
@@ -96,7 +100,7 @@ const validateBirthDay = (birthDay) => {
 
 
 const AccountInfoComponent = () => {
-  const [uploadedImage, setUploadedImage] = useState(null); // State to store uploaded image URL
+ 
   const [form] = Form.useForm(); // Sử dụng form instance của Ant Design
   const [passwordForm] = Form.useForm(); // Form cho phần đổi mật khẩu
   const dispatch = useDispatch();
@@ -106,7 +110,12 @@ const [errorMessage, setErrorMessage] = useState('');
   const [loadingPassword, setLoadingPassword] = useState(false); // Để kiểm soát trạng thái loading khi đổi mật khẩu
   const { user, status, error } = useSelector((state) => state.user);
   console.log("MAAAAAA",user)
+  const [uploadedImage, setUploadedImage] = useState(user?.avatar || null  ); // State to store uploaded image URL
   // Gọi API lấy thông tin user khi load trang
+
+  useEffect(()=>{
+    setUploadedImage(user?.avatar || null )
+  },[dispatch,user])
   useEffect(() => {
     const token = localStorage.getItem('token'); 
     if (token) {
@@ -124,6 +133,8 @@ const [errorMessage, setErrorMessage] = useState('');
       console.warn('Không tìm thấy token trong LocalStorage.');
     }
   }, [dispatch]);
+  const [selectedLocation, setSelectedLocation] = useState(user?.locationId || {
+    locationName:''})
 
   // Cập nhật giá trị trong form khi `user` thay đổi
   useEffect(() => {
@@ -135,6 +146,9 @@ const [errorMessage, setErrorMessage] = useState('');
         gender: user?.gender || '',
         dateOfBirth: user?.dateOfBirth ? moment(user.dateOfBirth) : null,
       });
+
+      setSelectedLocation(user?.locationId || {
+        locationName:''})
     }
   }, [user, form]);
 
@@ -152,7 +166,9 @@ const [errorMessage, setErrorMessage] = useState('');
   const  phoneError = validatePhonenumber(values.phoneNumber);
   
   
-  
+  if(!uploadedImage ){
+    return;
+  }
   
       if (userId) {
         const updatedUserData = {
@@ -166,13 +182,31 @@ const [errorMessage, setErrorMessage] = useState('');
           // Đảm bảo password được xử lý đúng (nếu có thay đổi)
           password: user?.password , // Nếu không có thay đổi thì giữ nguyên
           address: values.address || user?.address || "", // Địa chỉ
-           avatar: uploadedImage || ""
+           avatar: uploadedImage || "",
+           locationId:  selectedLocation?._id,
+
         };
   
         // Gửi thông tin cập nhật tới API
         dispatch(updateUser({ userId, userData: updatedUserData })   ).unwrap()
         .then(() => {
           message.success("Cập nhật thông tin thành công");
+
+          const token = localStorage.getItem('token'); 
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token); 
+        if (decodedToken?.userId) {
+          dispatch(fetchUserById(decodedToken.userId));
+        } else {
+          console.warn('Không tìm thấy userId trong token.');
+        }
+      } catch (error) {
+        console.error('Lỗi khi giải mã token:', error);
+      }
+    } else {
+      console.warn('Không tìm thấy token trong LocalStorage.');
+    }
         })
         .catch(() => {
           message.error("Cập nhật thông tin thất bại");
@@ -218,7 +252,8 @@ const [errorMessage, setErrorMessage] = useState('');
     }
   };
 console.log(user)
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  
 const handleImageUpload = async (options) => {
   const { file, onSuccess, onError } = options;
 
@@ -248,6 +283,59 @@ const handleImageUpload = async (options) => {
     onError(error);
   }
 };
+
+
+
+
+const getGoogleMapsUrl = (placeId) => {
+  return `https://www.google.com/maps/place/?q=place_id:${user?.locationId?.description}`;
+};
+
+const handleModalOpen = () => {
+  setIsModalVisible(true);
+};
+
+// Đóng modal
+const handleCancel = () => {
+  setIsModalVisible(false);
+};
+
+const handleOk = () => {
+    // if (selectedLocation) {
+    //   setSettings((prevSettings) => ({
+    //     ...prevSettings,
+    //     location: selectedLocation,
+    //   }));
+    // }
+    setIsModalVisible(false);
+  };
+
+  // Khi chọn địa điểm từ LocationPicker
+ 
+
+ 
+
+
+const handleLocationSelect = (place) => {
+  
+
+    const newPLACE = {
+        description: place.description,
+        latitude: place.latitude,
+        longitude: place.longitude,
+        locationName: place.des,
+        locationID: place.description,
+
+    }
+  dispatch(createLocation(newPLACE))
+    .unwrap()
+    .then((newLocation) => {
+      setSelectedLocation(newLocation); // Store temporarily
+    })
+    .catch((error) => {
+      console.error("Error creating location:", error);
+    });
+};
   return (
     <Container>
       <Title level={3}>Thông tin tài khoản</Title>
@@ -270,9 +358,24 @@ const handleImageUpload = async (options) => {
         <Form.Item label="Số điện thoại" name="phoneNumber">
           <Input placeholder="Số điện thoại" />
         </Form.Item>
-        <Form.Item label="Địa chỉ" name="address">
-          <Input placeholder="Địa chỉ" />
-        </Form.Item>
+        <Form.Item label="Địa chỉ kho">
+            <TextArea
+              value={`${selectedLocation?.locationName}`}
+              rows={2}
+              readOnly
+              style={{ pointerEvents: "none" }}
+            />
+            <Button style={{ marginTop: "8px" }} onClick={handleModalOpen}>
+              Chỉnh địa chỉ
+            </Button>
+            <Button
+  style={{ marginTop: '8px', marginLeft: '8px' }}
+  href={getGoogleMapsUrl(selectedLocation?.description)}
+  target="_blank"
+  icon={<EnvironmentOutlined />}
+/>
+          </Form.Item>
+
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label="Giới tính" name="gender">
@@ -322,13 +425,17 @@ const handleImageUpload = async (options) => {
             
           </Card>
         {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-        <StyledButton 
-          type="primary" 
-          loading={loading || status === 'loading'} // Hiển thị loading nếu đang cập nhật
-          onClick={handleUpdate}
-        >
-          CẬP NHẬT
-        </StyledButton>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+  <StyledButton 
+    type="primary" 
+    loading={loading || status === 'loading'}
+    onClick={handleUpdate}
+    style={{ width: '35%' }}
+  >
+    CẬP NHẬT
+  </StyledButton>
+</div>
+
        
       </Form>
 
@@ -352,14 +459,34 @@ const handleImageUpload = async (options) => {
           rules={[{ required: true, message: 'Vui lòng xác nhận mật khẩu mới!' }]}>
           <Input.Password placeholder="Nhập lại mật khẩu mới" />
         </Form.Item>
+        <div style={{ display: "flex", justifyContent: "center" }}>
         <StyledButton 
           type="primary" 
           loading={loadingPassword} 
           onClick={handleChangePassword}
+          style={{ width: '35%' }}
+
         >
           ĐỔI MẬT KHẨU
         </StyledButton>
+        </div>
       </Form>
+      <Modal
+        title="Chỉnh địa chỉ"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            Hủy
+          </Button>,
+          <Button key="ok" type="primary" onClick={handleOk}>
+            OK
+          </Button>,
+        ]}
+        width={800}
+      >
+        <LocationPicker onLocationSelect={handleLocationSelect} />
+      </Modal>
     </Container>
   );
 };

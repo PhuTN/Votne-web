@@ -213,7 +213,8 @@ router.get("/name/brand", async (req, res) => {
 // API: Cập nhật tất cả Attributes và AttributeValues
 router.put("/bulk-update", async (req, res) => { 
   const attributes = req.body; // Mảng Attribute từ body request
-  
+  console.log(attributes[attributes.length-1])
+  console.log("HELLO")
   if (!Array.isArray(attributes)) {
     return res.status(400).json({ error: "Input must be an array" });
   }
@@ -236,9 +237,11 @@ router.put("/bulk-update", async (req, res) => {
         if (valueData) {
           // Nếu AttributeValue đã tồn tại, cập nhật
           Object.assign(valueData, value);
+          await valueData.save()
         } else {
           // Nếu không có AttributeValue, tạo mới
           valueData = new AttributeValue(value);
+          
           await valueData.save()
           console.log(value)
           console.log(valueData)

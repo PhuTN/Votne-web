@@ -108,7 +108,12 @@ router.post("/addStaff", async (req, res) => {
     });
 
     await newUser.save();
-
+    await transporter.sendMail({
+      from: "your-email@gmail.com",
+      to: email,
+      subject: "Thông báo tài khoản nhân viên",
+      text: `Chào ${username},\n\nBạn đã được thêm vào hệ thống Votne với vai trò ${role}.\nThông tin đăng nhập:\nEmail: ${email}\nMật khẩu: ${password}\n\nVui lòng đăng nhập và đổi mật khẩu để bảo mật tài khoản.`,
+    });
     res.status(201).json({ message: "Nhân viên mới đã được thêm thành công.", user: newUser });
   } catch (error) {
     console.log(error);
@@ -120,6 +125,8 @@ router.post("/addStaff", async (req, res) => {
 
 // POST /api/users/verify
 const Cart = require("../models/Cart"); // Import model Cart
+const Order = require("../models/Order");
+const Product = require("../models/Product");
 
 router.post("/verify", async (req, res) => {
   const { email, verificationCode } = req.body;
@@ -264,15 +271,11 @@ router.post("/resend-code", async (req, res) => {
  */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate("locationId"); // Populate locationId
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // if (user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-    //   return res.status(403).json({ message: "Access denied" });
-    // }
 
     res.status(200).json(user);
   } catch (err) {
@@ -280,6 +283,191 @@ router.get("/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Failed to get user" });
   }
 });
+
+
+router.get("/count/orders", async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments({});
+ 
+    res.status(200).json({ totalOrders });
+  } catch (error) {
+    console.error("Lỗi khi lấy tổng số đơn hàng:", error);
+    res.status(500).json({ message: "Lỗi server khi lấy tổng số đơn hàng" });
+  }
+});
+router.get("/count/customers", async (req, res) => {
+  try {
+    console.log("HELLo")
+    const customerCount = await User.countDocuments({ role: "Customer" });
+    res.status(200).json({ totalCustomers: customerCount });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Lỗi khi lấy số lượng khách hàng" });
+  }
+});
+router.get("/count/products", async (req, res) => {
+  try {
+    const totalProducts = await Product.countDocuments({});
+    res.status(200).json({ totalProducts });
+  } catch (error) {
+    console.error("Lỗi khi lấy tổng số sản phẩm:", error);
+    res.status(500).json({ message: "Lỗi server khi lấy tổng số sản phẩm" });
+  }
+});
+
+
+router.get("/count/revenue", async (req, res) => {
+  try {
+    console.log("LSDJFLDL")
+    const totalRevenue = await Order.aggregate([
+      { $match: { status: "Đã giao" } }, // Chỉ lấy các đơn hàng đã giao
+      { $unwind: "$products" }, // Tách từng sản phẩm trong đơn hàng
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: { $multiply: ["$products.price", "$products.number"] } }, // Tính tổng doanh thu
+        },
+      },
+    ]);
+
+    res.status(200).json({ totalRevenue: totalRevenue[0]?.totalRevenue || 0 });
+  } catch (error) {
+    console.error("Lỗi khi lấy tổng doanh thu:", error);
+    res.status(500).json({ message: "Lỗi server khi lấy tổng doanh thu" });
+  }
+});
+
+router.get("/report/report1", async (req, res) => {
+  try {
+    console.log("ELLOLLLLLLL")
+    // Truy vấn dữ liệu đơn hàng và nhóm theo tháng, năm bắt đầu từ năm 2025
+    const orders = await Order.aggregate([
+      {
+        $unwind: "$products"  // Tách sản phẩm trong mỗi đơn hàng
+      },
+      {
+        $match: {
+          // Lọc các đơn hàng có ngày từ năm 2025 trở đi
+          "dayorder": { $gte: new Date("2025-01-01") }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: "$dayorder" },
+            year: { $year: "$dayorder" }
+          },
+          revenue: { $sum: { $multiply: ["$products.price", "$products.number"] } },
+          quantitySold: { $sum: "$products.number" }
+        }
+      },
+      {
+        $project: {
+          month: { $arrayElemAt: [["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"], { $subtract: ["$_id.month", 1] }] },
+          year: "$_id.year",
+          revenue: 1,
+          quantitySold: 1,
+          _id: 0
+        }
+      },
+      {
+        $sort: { year: 1, month: 1 }  // Sắp xếp theo năm, tháng
+      }
+    ]);
+
+    // Trả về dữ liệu cho client
+    res.json(orders);
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: "Error retrieving report data", error: err });
+  }
+});
+
+
+
+
+
+
+// Kết nối đến MongoDB
+
+// API lấy dữ liệu tỷ lệ bán theo loại sản phẩm (group theo 'type')
+router.get("/api/pie-data-by-type", async (req, res) => {
+  try {
+    // Truy vấn các đơn hàng có sản phẩm được bán trong năm 2025 và populate sản phẩm
+    const orders = await Order.aggregate([
+      {
+        $match: { "dayorder": { $gte: new Date("2025-01-01") } } // Lọc đơn hàng từ năm 2025
+      },
+      { $unwind: "$products" },  // Tách mảng sản phẩm trong mỗi đơn hàng
+      {
+        $lookup: {
+          from: "products", // Lấy dữ liệu từ collection "products"
+          localField: "products.idproduct", // Trường idproduct trong đơn hàng
+          foreignField: "_id", // Trường id trong sản phẩm
+          as: "productDetails" // Alias cho dữ liệu sản phẩm
+        }
+      },
+      { $unwind: "$productDetails" }, // Tách mảng productDetails để dễ sử dụng
+      {
+        $group: {
+          _id: "$productDetails.type", // Nhóm theo type của sản phẩm
+          totalSold: { $sum: "$products.number" } // Tổng số lượng bán của sản phẩm đó
+        }
+      }
+    ]);
+
+    // Định nghĩa dữ liệu cho pie chart
+    let salesData = {
+      'Vợt': 0,
+      'Giày': 0,
+      'Áo': 0,
+      'Váy': 0,
+      'Quần': 0,
+      'Túi vợt': 0,
+      'Balo': 0,
+      'Phụ kiện': 0
+    };
+    
+    // Cập nhật dữ liệu bán cho từng loại sản phẩm
+    orders.forEach(order => {
+      const productType = order._id.trim(); // Loại bỏ khoảng trắng thừa nếu có
+      if (salesData[productType] !== undefined) {
+        salesData[productType] += order.totalSold; // Cộng dồn số lượng bán
+      } else {
+        console.log(`Không tìm thấy ${productType} trong salesData`);
+      }
+    });
+    
+  
+    
+    
+    console.log(orders); 
+    // Dữ liệu trả về cho pie chart
+    const pieData = {
+      labels: Object.keys(salesData), // Các loại sản phẩm (type)
+      datasets: [
+        {
+          label: 'Tỷ lệ bán được 2025',
+          data: Object.values(salesData), // Dữ liệu tỷ lệ bán cho mỗi loại sản phẩm
+          backgroundColor: [
+            '#ff5733', '#33ff57', '#3357ff', '#f7c15c', '#d1f7c1', '#fc85ae', '#c6f4ff', '#ffeb64'
+          ],
+          borderColor: '#fff',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Trả về dữ liệu cho client
+    res.json(pieData);
+  } catch (err) {
+    res.status(500).json({ message: "Error retrieving pie data", error: err });
+  }
+});
+
+
+
+
 
 /**
  * @swagger
@@ -326,6 +514,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
  */
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
+    console.log(req.body)
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     if (!updatedUser) {
@@ -346,7 +535,7 @@ router.put("/:id/wishlist",async (req, res) => {
   try {
     const userId = req.params.id;
     const { wishList } = req.body; // Nhận danh sách sản phẩm yêu thích từ request body
-    console.log(userId,wishList)
+  
     // Kiểm tra xem người dùng có tồn tại không
     const user = await User.findById(userId);
     if (!user) {

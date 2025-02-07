@@ -49,8 +49,14 @@ export const columnsProduct = [
   // },
   {
       title: 'Số lượng bán được',
-      dataIndex: 'soldQuantity',
+      dataIndex: 'totalSold',
       align: 'left',
+  },
+  {
+    title: 'Đánh giá',
+    dataIndex: 'rating',
+    align: 'left',
+    render: (value) => value > 0 ? value.toFixed(1) : 'Chưa đánh giá',
   },
   {
       title: 'Hành động',

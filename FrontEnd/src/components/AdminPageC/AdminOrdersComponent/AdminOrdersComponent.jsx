@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Table, Button, Select, Input, Row, Col, Tooltip, Form, message } from "antd";
+import { Modal, Table, Button, Select, Input, Row, Col, Tooltip, Form, message, DatePicker, Slider } from "antd";
 import { EditOutlined, UndoOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllOrders, updateOrder } from "../../../redux/Slicer/orderSlice";
 import { useNavigate } from "react-router-dom";
-
+import moment from "moment";
+const { RangePicker } = DatePicker;
 const AdminOrdersComponent = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -53,7 +54,7 @@ const AdminOrdersComponent = () => {
   }
 
   console.log("HELLO")
-  console.log(filteredData)
+  console.log(selectedOrder)
   
   console.log("HELLO")
   useEffect(() => {
@@ -97,7 +98,7 @@ const AdminOrdersComponent = () => {
     shippingForm.setFieldsValue({ shippingStatus: order?.status || "" });
     setIsUpdateShippingModalVisible(true);
   };
-
+  const orderStatusOptions = ["Chờ xử lý", "Đang xử lý", "Đang giao hàng", "Đã giao", "Đã hủy"];
   const handleUpdateShippingSubmit = () => {
     shippingForm.validateFields()
       .then((values) => {
@@ -166,12 +167,96 @@ const AdminOrdersComponent = () => {
     setSelectedOrder(record);
    navigate(`/order-detail/${record._id}`)
   };
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDateRange, setSelectedDateRange] = useState(null);
+
+  const handleDateFilterChange = (dates, dateStrings) => {
+    setSelectedDateRange(dateStrings);
+  };
+
   const columns = [
     {
       title: "ID",
       dataIndex: "id",
       key: "id",
     },
+    {
+      title: "Ngày đặt",
+      dataIndex: "dayorder",
+      key: "dayorder",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <RangePicker
+            onChange={(dates, dateStrings) => {
+              setSelectedKeys(dateStrings[0] && dateStrings[1] ? [dateStrings] : []);
+              confirm();
+            }}
+            format="YYYY-MM-DD"
+            value={
+              selectedKeys.length ? [moment(selectedKeys[0][0]), moment(selectedKeys[0][1])] : null
+            }
+            style={{ width: "100%" }}
+          />
+          {/* <Button
+            onClick={() => {
+              clearFilters();
+              setSelectedDateRange(null);
+            }}
+            size="small"
+            style={{ width: "100%", marginTop: 8 }}
+          >
+            Xóa bộ lọc
+          </Button> */}
+        </div>
+      ),
+      onFilter: (value, record) => {
+        if (!value.length) return true;
+        const [start, end] = value;
+        const recordDate = moment(record.dayorder).format("YYYY-MM-DD");
+        return recordDate >= start && recordDate <= end;
+      },
+      render: (text) => moment(text).format("YYYY-MM-DD"),
+    },
+    {
+      title: "Tổng tiền",
+      dataIndex: "total",
+      key: "total",
+      sorter: (a, b) => a.total - b.total, // Sắp xếp tăng/giảm theo total
+      // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+       
+      //   <div style={{ padding: 8, width: 220 }}>
+      //     <Slider
+      //       range
+      //       min={0}
+      //       max={50000000}
+      //       step={1000000}
+      //       value={selectedKeys.length ? selectedKeys : [0, 50000000]} // Giữ giá trị là mảng
+      //       onChange={(value) => setSelectedKeys(value)}  // Set giá trị là mảng
+      //       tooltip={{ formatter: (value) => value.toLocaleString("vi-VN") + " ₫" }}
+      //     />
+      //     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
+      //       <Button size="small" type="primary" onClick={() => confirm()}>
+      //         Áp dụng
+      //       </Button>
+      //       <Button size="small" onClick={() => clearFilters()}>
+      //         Xóa lọc
+      //       </Button>
+      //     </div>
+      //   </div>
+      // ),
+      // onFilter: (value, record) => {
+        
+      //   const total = Number(record.total);  // Đảm bảo giá trị là số
+      //   if (Array.isArray(value) && value.length === 2) {
+      //     return total >= value[0] && total <= value[1];  // Lọc theo mảng giá trị
+      //   }
+      //   return true;  // Nếu không phải mảng hoặc không đủ 2 phần tử, không lọc
+      // },
+      render: (total) => total.toLocaleString("vi-VN") + " ₫", // Format tiền VND
+    },
+    
+    
+    
     {
       title: "Tên khách hàng",
       dataIndex: "name",
@@ -191,18 +276,45 @@ const AdminOrdersComponent = () => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      filters: orderStatusOptions.map((status) => ({ text: status, value: status })),
+      onFilter: (value, record) => record.status === value,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+  <Select
+    placeholder="Chọn trạng thái"
+    onChange={(value) => setSelectedKeys(value ? [value] : [])}
+    value={selectedKeys[0] || null}
+    style={{ width: "100%", marginBottom: 8 }}
+  >
+    {orderStatusOptions.map((status) => (
+      <Select.Option key={status} value={status}>
+        {status}
+      </Select.Option>
+    ))}
+  </Select>
+  <div style={{ display: "flex", gap: 8, justifyContent: "space-between" }}>
+    <Button onClick={() => confirm()} type="primary" size="small" style={{ flex: 1 }}>
+      Áp dụng
+    </Button>
+    <Button onClick={() => clearFilters()} size="small" style={{ flex: 1 }}>
+      Xóa bộ lọc
+    </Button>
+  </div>
+</div>
+
+      ),
       render: (status, record) => (
         <Select
           defaultValue={status}
           style={{ width: 150 }}
           onChange={(value) => handleStatusChange(record._id, value)}
-          data-testid = {record.id}
+          data-testid={record.id}
         >
-          <Select.Option   value="Chờ xử lý">Chờ xử lý</Select.Option>
-          <Select.Option data-testid = "xacNhan" value="Đang xử lý">Đã xác nhận</Select.Option>
-          <Select.Option data-testid = "dangGiao" value="Đang giao hàng">Đang giao hàng</Select.Option>
-          <Select.Option data-testid = "daGiao" value="Đã giao">Đã giao</Select.Option>
-          <Select.Option data-testid = "daHuy" value="Đã hủy">Đã hủy</Select.Option>
+          {orderStatusOptions.map((status) => (
+            <Select.Option key={status} value={status}>
+              {status}
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -271,15 +383,15 @@ const AdminOrdersComponent = () => {
   return (
     <div>
       <Row gutter={16}>
-        <Col span={4}>
+        <Col span={2}>
           <Select defaultValue="id" onChange={handleCategoryChange} style={{ width: "100%" }}>
             <Select.Option value="id">ID</Select.Option>
             <Select.Option value="name">Tên khách hàng</Select.Option>
-            <Select.Option value="phonumber">Số điononện thoại</Select.Option>
+            <Select.Option value="phonumber">Số điện thoại</Select.Option>
             <Select.Option value="address">Địa chỉ</Select.Option>
           </Select>
         </Col>
-        <Col span={6}>
+        <Col span={5}>
           <Input.Search
             placeholder="Tìm kiếm..."
             onSearch={handleSearch}
@@ -309,13 +421,19 @@ const AdminOrdersComponent = () => {
         onCancel={handleModalClose}
         footer={null}
       >
-        <Table
-          columns={productColumns}
-          dataSource={selectedOrder?.products || []}
-          rowKey="_id"
-          pagination={false}
-          
-        />
+        <Table 
+  columns={productColumns}
+  dataSource={selectedOrder?.products || []}
+  rowKey="_id"
+  pagination={false}
+  onRow={(record) => ({
+    onClick: () => {
+      // Chuyển hướng khi click vào một record
+      console.log(record)
+      window.location.href = `/product/product-detail/${record?.idproduct?._id}`;
+    },
+  })}
+/>
       </Modal>
       <Modal
         title="Cập nhật trạng thái giao hàng"

@@ -109,7 +109,7 @@ console.log("HELLO",result)
   return (
     <div style={{width: '90%', 
                 margin: '10px auto', }}>
-        <OrderDetailComponent personalInfo={personalInfo2} orderData={result} />
+        <OrderDetailComponent personalInfo={personalInfo2} orderData={result} order = {selectedOrder} />
     </div>
   )
 }

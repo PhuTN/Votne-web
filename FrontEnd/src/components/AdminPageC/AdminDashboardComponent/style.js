@@ -37,7 +37,7 @@ const DataLayout = styled(Layout)`
 
     .ant-table-thead > tr > th {
         background-color: #1E90FF; // Blue header color
-        color: #ffffff;            // White text color for header
+      color: #ffffff;            // White text color for header
         font-weight: bold;
         text-align: center;
     }
@@ -52,10 +52,12 @@ const DataLayout = styled(Layout)`
 `;
 
 const DashBoard = styled(Layout)`
+background-color: #ffffff;
 display: flex;
 flex-direction: row;
 width: 100%;
 justify-content: space-between;
+margin-top: 100px;
 @media (max-width: 1200px){
 flex-direction: column;
 justify-content: center;

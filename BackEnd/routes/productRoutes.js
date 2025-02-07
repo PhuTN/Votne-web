@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 const productService = require("../services/productService");
 const Product = require("../models/Product");
 const Review = require("../models/Review");
+const Order = require("../models/Order");
 const router = express.Router();
 
 /**
@@ -35,7 +36,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get("/by-type", async (req, res) => {
+router.get("/by-type", async (req, res) => { 
   const { type } = req.query;
 
   if (!type) {
@@ -70,18 +71,38 @@ router.get("/by-type", async (req, res) => {
       ratingMap[review._id.toString()] = review.avgRating;
     });
 
-    // Gắn rating vào mỗi product
-    const productsWithRating = products.map((product) => ({
+    // Lấy tổng số lượng sản phẩm đã bán từ bảng Order
+    const salesData = await Order.aggregate([
+      { $unwind: "$products" }, // Tách từng sản phẩm trong danh sách
+      { $match: { "products.idproduct": { $in: productIds } } },
+      { 
+        $group: {
+          _id: "$products.idproduct",
+          totalSold: { $sum: "$products.number" } // Tính tổng số lượng đã bán
+        }
+      }
+    ]);
+
+    // Chuyển đổi salesData thành object { productId: totalSold }
+    const salesMap = {};
+    salesData.forEach((sale) => {
+      salesMap[sale._id.toString()] = sale.totalSold;
+    });
+
+    // Gắn rating và số lượng bán vào mỗi product
+    const productsWithDetails = products.map((product) => ({
       ...product.toObject(),
       rating: ratingMap[product._id.toString()] ?? -1, // Nếu không có review thì -1
+      totalSold: salesMap[product._id.toString()] ?? 0, // Nếu chưa bán thì mặc định 0
     }));
 
-    res.status(200).json(productsWithRating);
+    res.status(200).json(productsWithDetails);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 /**
  * @swagger
@@ -183,7 +204,7 @@ router.post(
       // Trả về thông tin sản phẩm mới tạo
       res.status(201).json({
         message: "Product created successfully",
-        productId: newProduct._id,  // Trả về _id của sản phẩm mới tạo
+        productId: newProduct,  // Trả về _id của sản phẩm mới tạo
       });
     } catch (err) {
       console.log(err);
@@ -325,12 +346,14 @@ router.put(
   
   async (req, res) => {
     try {
+      console.log(req.body)
       const updatedProduct = await productService.updateProductById(req.params.id, req.body);
       res.status(200).json({
         message: "Product updated successfully",
         data: updatedProduct,
       });
     } catch (err) {
+      console.log(err)
       res.status(500).json({ error: err.message });
     }
   }

@@ -12,6 +12,7 @@ import {
 } from "./style";
 import { Image } from "antd";
 import Bag from "../../../images/Bag.svg";
+import { Link } from "react-router-dom";
 
 const OrderProduct = ({ orderData2, orderId,
     iduser }) => {
@@ -77,12 +78,18 @@ const OrderProduct = ({ orderData2, orderId,
       ) : (
         orderData2?.map((item) => (
           <CartItemContainer key={item.id}>
+          <Link to={`/product/product-detail/${item._id}`} data-testid = {item.name} style={{ textDecoration: 'none' }} key={item._id}>
             <img src={item.image} alt={item.name} width={"50px"} />
+            </Link>
             <ItemDetails>
+            <Link to={`/product/product-detail/${item._id}`} data-testid = {item.name} style={{ textDecoration: 'none' }} key={item._id}>
               <ItemName>
                 {item.name}, {item.colorName}, {item.attributeValue}
               </ItemName>
+              </Link>
+              <Link to={`/product/product-detail/${item._id}`} data-testid = {item.name} style={{ textDecoration: 'none' }} key={item._id}>
               <div style={{ marginRight: "55px" }}>Số lượng: {item.quantity}</div>
+              </Link>
               <div style={{ marginTop: "10px" }}>
                 {item.review ? (
                   <Button type="link" onClick={() => handleReviewClick(item, "view")}>
@@ -95,9 +102,11 @@ const OrderProduct = ({ orderData2, orderId,
                 )}
               </div>
             </ItemDetails>
+            <Link to={`/product/product-detail/${item._id}`} data-testid = {item.name} style={{ textDecoration: 'none' }} key={item._id}>
             <ItemDetails>
               <ItemPrice>{(item.price * item.quantity).toLocaleString()} đ</ItemPrice>
             </ItemDetails>
+            </Link>
           </CartItemContainer>
         ))
       )}

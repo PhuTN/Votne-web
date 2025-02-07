@@ -2,6 +2,7 @@ const express = require("express");
 const { body, validationResult } = require("express-validator");
 const orderService = require("../services/orderService.js");
 const authMiddleware = require("../middlewares/authMiddleware");
+const Order = require("../models/Order.js");
 
 const router = express.Router();
 
@@ -154,18 +155,27 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
+    console.log("HÊLLLO");
     const { id } = req.params;
-    const updatedOrder = await orderService.updateOrderById(id, req.body);
+    console.log(id);
+
+    const updatedOrder = await Order.findByIdAndUpdate(id, req.body, {
+      new: true, // Trả về dữ liệu sau khi cập nhật
+      runValidators: true, // Đảm bảo dữ liệu hợp lệ
+    });
+
     if (!updatedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
+
     res.status(200).json({
       message: "Order updated successfully",
       data: updatedOrder,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -188,14 +198,30 @@ router.put("/:id", authMiddleware, async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get("/",  async (req, res) => {
+
+
+router.get("/", async (req, res) => {
   try {
+    // Lấy tất cả đơn hàng
     const orders = await orderService.getAllOrders();
-    res.status(200).json(orders);
+
+    // Thêm thuộc tính total vào mỗi đơn hàng
+    const updatedOrders = orders.map((order) => {
+      const total = order.products.reduce(
+        (sum, product) => sum + product.price * product.number,
+        0
+      );
+
+      return { ...order.toObject(), total }; // Chuyển mongoose document thành object và thêm total
+    });
+
+    // Trả về danh sách đơn hàng có tổng tiền của từng đơn
+    res.status(200).json(updatedOrders);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 /**
@@ -233,6 +259,7 @@ router.put("/", authMiddleware, async (req, res) => {
       data: updatedOrders,
     });
   } catch (err) {
+    
     res.status(500).json({ error: err.message });
   }
 });

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Table, Button, Modal, Input, message } from "antd";
+import { Table, Button, Modal, Input, message, notification } from "antd";
 import OrderProduct from "../OrderProduct/OrderProduct";
 import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { updateOrder, updateOrderById } from "../../../redux/Slicer/orderSlice";
 
 const AccountInfoWrapper = styled.div`
   background-color: #ffffff;
@@ -130,7 +132,7 @@ const columns = [
   },
 ];
 
-const OrderDetailComponent = ({ personalInfo, orderData }) => {
+const OrderDetailComponent = ({ personalInfo, orderData,order }) => {
   console.log("ORDER");
   console.log(orderData);
   console.log("ORDER");
@@ -141,12 +143,38 @@ const OrderDetailComponent = ({ personalInfo, orderData }) => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    console.log("Lý do trả hàng:", returnReason);
-    setIsModalVisible(false);
-    setReturnReason(""); // Reset lý do
-    message.success("Hủy thành công!");
-  };
+ 
+const dispatch = useDispatch();
+
+const handleOk = () => {
+  console.log("Lý do trả hàng:", returnReason);
+
+  const updatedOrderData = { ...order, location: returnReason ,status:"Đã hủy"};
+
+  dispatch(updateOrderById({ orderId: order._id, orderData: updatedOrderData }))
+  .then(() => {
+    notification.success({
+      message: "Hủy đơn hàng thành công",
+      description: `Lý do: ${returnReason}`,
+    });
+
+    setTimeout(() => {
+      window.location.reload(); // Reload trang sau khi thông báo
+    }, 1000);
+  })
+  .catch(() => {
+    notification.error({
+      message: "Hủy đơn hàng thất bại",
+      description: "Đã có lỗi xảy ra, vui lòng thử lại!",
+    });
+  });
+
+
+  setIsModalVisible(false);
+  setReturnReason("");
+};
+
+
 
   const handleCancel = () => {
     setIsModalVisible(false);

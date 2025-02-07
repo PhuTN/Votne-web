@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import SlideShowComponent from '../../components/HomePageC/SlideShowComponent/SlideShowComponent'
 import InfoBlocksComponent from '../../components/HomePageC/InfoBlocksComponent/InfoBlocksComponent'
 import ProductSliderComponent from '../../components/HomePageC/ProductSliderComponent/ProductSliderComponent'
@@ -23,10 +23,11 @@ import { jwtDecode } from 'jwt-decode'
 import { fetchCartByUserId } from '../../redux/Slicer/cartSlice'
 import ChatBot from '../../components/ChatBot/ChatBot'
 import ChatBot2 from '../../components/ChatBot/ChatBot2'
+import { fetchSettings } from '../../redux/Slicer/settingsSlice'
 
 const HomePage = () => {
 
-  const slideImages = [
+  const [slideImages, setSlideImages] = useState([
     {
       url: 'https://cdn.shopvnb.com/img/1920x640/uploads/slider/ynx-eclp-banner_1695178004.webp',
       caption: 'Slide 1'
@@ -39,8 +40,10 @@ const HomePage = () => {
       url: 'https://cdn.shopvnb.com/img/1920x640/uploads/slider/astrox88-sd-key-visual-2880x1120-_1718650445.webp',
       caption: 'Slide 3'
     },
-  ];
-
+  ]);
+  
+  
+  
   const tabItems = [
     { key: "all", label: "Tất cả" },
     { key: "Vợt", label: "Vợt Cầu Lông" },
@@ -196,7 +199,32 @@ const HomePage = () => {
   console.log("CARTT", localStorage.getItem("cart"))
 
 
+  // State cục bộ lưu settings
+  const [settings, setSettings] = useState(null);
 
+  // Lấy dữ liệu settings từ Redux
+  const { settings: reduxSettings } = useSelector((state) => state.settings);
+
+  useEffect(() => {
+    dispatch(fetchSettings()); // Gọi API lấy settings
+  }, [dispatch]);
+
+  // Cập nhật state cục bộ khi có dữ liệu từ Redux
+  useEffect(() => {
+    if (reduxSettings) {
+      setSettings(reduxSettings[0]);
+    }
+  }, [reduxSettings]);
+  console.log(settings)
+  useEffect(() => {
+    if (settings && settings.images) {
+      const updatedSlides = settings.images.map((imageUrl, index) => ({
+        url: imageUrl,
+        caption: `Slide ${index + 1}`
+      }));
+      setSlideImages(updatedSlides);
+    }
+  }, [settings]); // Chạy lại khi settings thay đổi
   return (
 
     <div>

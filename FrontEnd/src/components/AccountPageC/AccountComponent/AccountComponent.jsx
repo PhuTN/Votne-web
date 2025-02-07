@@ -26,7 +26,7 @@ const InfoContainer = styled.div`
 
   @media (min-width: 768px) {
     margin-right: 20px;
-    height: 320px;
+    height: 350px;
   }
 `;
 

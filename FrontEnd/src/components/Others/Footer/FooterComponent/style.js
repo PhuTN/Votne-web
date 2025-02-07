@@ -62,6 +62,12 @@ const FooterContainer = styled.div`
         text-decoration: underline;
       }
     }
+    .footer-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Căn giữa theo chiều ngang */
+  text-align: center; /* Căn giữa nội dung */
+}
 
     .highlight {
       color: #ffffff;

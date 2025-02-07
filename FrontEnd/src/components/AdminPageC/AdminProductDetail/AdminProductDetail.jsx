@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadFile } from '../../../redux/Slicer/uploadSlice';
 import { fetchAttributesByType } from '../../../redux/Slicer/attributeSlice';
 import { updateProduct } from '../../../redux/Slicer/productSlice';
+import { fetchReviewsByProductId } from '../../../redux/Slicer/reviewSlice';
+import ProductReview from '../../ProductReview/ProductReview';
 
 const { Option } = Select;
 
@@ -108,24 +110,38 @@ const AdminProductDetail = (selectedRow) => {
  
  const matchingValues = brandds?.values
  .filter(value => values.selectedItems.includes(value._id))
- .map(value => ({ value: value.value, _id: value._id }));
+ .map(value => ({ value: value?.value, _id: value._id }));
  console.log("BRAND",matchingValues)
 
- formAttribute.setFieldsValue({
-  brand: matchingValues[0].value ? matchingValues[0].value : formAttribute.brand,
-});
+ if (Array.isArray(matchingValues) && matchingValues.length > 0 && matchingValues[0]?.value) {
+  formAttribute.setFieldsValue({
+    brand: matchingValues[0].value,
+  });
+}
 
 
-      
+
+
+
+if (Array.isArray(matchingValues) && matchingValues.length > 0 && matchingValues[0]?.value) {
       setProductState((prevState) => ({
         ...prevState,
         brand: matchingValues[0].value ? matchingValues[0].value : prevState.brand,
         attributeValues: values.selectedItems
       }));
+    }
+    else{
+      setProductState((prevState) => ({
+        ...prevState,
+        
+        attributeValues: values.selectedItems
+      }));
+    }
       
       setEditingAttributes(null);
     } catch (error) {
       console.error("Error updating attributes:", error);
+      
     }
   };
 
@@ -264,7 +280,9 @@ let updatedInventory = []
 
   const handleStockEdit = (stock) => {
     const result = productDataState.find(obj => obj.name === "Size");
+    console.log("REEEEE",result)
     if(result){
+   
     setEditingStock(stock);
     setIsStockModalVisible(true);
     formStockEdit.setFieldsValue({
@@ -574,7 +592,7 @@ let updatedInventory = []
           ? { 
               ...benefit, 
               description: values.description,
-              active: values.active
+              active: values.active === "Hoạt động"
             }
           : benefit
       );
@@ -763,7 +781,24 @@ const handleSave =  async ( ) => {
   
 };
 
+const { reviews } = useSelector((state) => state.reviews);
 
+
+  useEffect(() => {
+    if (selectedRow?.selectedRow?._id) {
+      dispatch(fetchReviewsByProductId(selectedRow?.selectedRow?._id));
+    }
+  }, [dispatch, selectedRow]);
+console.log("REVIEW",reviews)
+
+let mappedReviews = reviews?.map((review, index) => ({
+  id: index + 1, // Tạo ID dựa trên thứ tự
+  customerName: review.userId.username, // Lấy tên khách hàng từ userId
+  avatar: review.userId.avatar, // Lấy avatar từ userId
+  comment: review.comment, // Nội dung đánh giá
+  rating: review.star, // Số sao
+  date: new Date(review.date).toISOString().split("T")[0], // Chuyển ngày thành định dạng YYYY-MM-DD
+}));
   return (
     <Wrapper>
       <Title>Thông tin sản phẩm</Title>
@@ -964,10 +999,10 @@ const handleSave =  async ( ) => {
         }));
       }}
       style={{
-        width: '100%',
+        width: '97%',
         height: '900px', // Điều chỉnh chiều cao
         fontSize: '16px',
-        padding: '10px',
+        padding: '20px',
         border: '1px solid #ccc',
         borderRadius: '4px',
         resize: 'none', // Ngăn người dùng thay đổi kích thước khung
@@ -977,7 +1012,9 @@ const handleSave =  async ( ) => {
     />
   </div>
 </Container>
+<Container style={{ display: 'block', paddingTop: "-20px" }}><ProductReview reviewss = {mappedReviews}></ProductReview></Container>
 
+  
 
    
       <Modal
@@ -1169,7 +1206,18 @@ const handleSave =  async ( ) => {
           </Form.Item>
         </Form>
       </Modal>
-
+      <Modal
+        title="Chỉnh sửa thông tin kho"
+        visible={isStockModalVisible}
+        onOk={handleOkStockModal}
+        onCancel={handleCancelStockModal}
+      >
+        <Form form={formStockEdit}>
+          <Form.Item name="stock" label="Số lượng" >
+            <InputNumber min={0} />
+          </Form.Item>
+        </Form>
+      </Modal>
       <Modal
         title="Thêm mới ưu đãi"
         visible={isAddBenefitModalVisible}

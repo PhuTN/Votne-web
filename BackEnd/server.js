@@ -16,6 +16,9 @@ const cartRoutes = require("./routes/cartRoute");
 const orderRoutes = require("./routes/orderRoute");
 const uploadRoutes = require("./routes/uploadRouter"); // Route cho upload ảnh
 const reviewRoutes = require("./routes/reviewRoute");
+const settingsRoute = require("./routes/settingsRoute");
+const locationRoute = require("./routes/locationRoutes");
+
 
 // Load .env file
 dotenv.config();
@@ -47,6 +50,10 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes); // Thêm route upload
 app.use("/api/reviews",reviewRoutes); // Thêm route upload
+app.use("/api/locations",locationRoute); // Thêm route upload
+app.use("/api/settings",settingsRoute); // Thêm route upload
+
+
 
 
 // Swagger Documentation

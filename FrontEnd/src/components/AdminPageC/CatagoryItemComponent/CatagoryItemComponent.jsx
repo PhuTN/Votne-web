@@ -127,7 +127,7 @@ if (values.attribute.length < 3) {
                     ...attr,
                     values: attr.values.map((val) =>
                       val.id === editData.id
-                        ? { ...val, value: values.attribute, active: values.status === "Hoạt động" }
+                        ? { ...val, value: values.attribute }
                         : val
                     ),
                   }
@@ -313,14 +313,16 @@ useEffect(() => {
       </Button>
     </Row>
     <Table
-      dataSource={attributes}
-      columns={attributeColumns}
-      rowKey="id"
-      onRow={(record) => ({
-        onClick: () => handleAttributeClick(record),
-      })}
-      scroll={{ x: 400 }}
-    />
+  bordered
+  dataSource={[...attributes].reverse()} // Đảo ngược thứ tự
+  columns={attributeColumns}
+  rowKey="id"
+  onRow={(record) => ({
+    onClick: () => handleAttributeClick(record),
+  })}
+  scroll={{ x: 400 }}
+/>
+
   </Col>
   <Col span={12}>
     <Row justify="space-between" align="middle">
@@ -341,14 +343,15 @@ useEffect(() => {
       </Button>
     </Row>
     <Table
-      dataSource={
-        attributes.find((attr) => attr.id === selectedAttributeId)?.values || []
-      }
-      columns={valueColumns}
-      rowKey="id"
-      scroll={{ x: 400 }}
+  bordered
+  dataSource={
+    attributes.find((attr) => attr.id === selectedAttributeId)?.values?.slice().reverse() || []
+  }
+  columns={valueColumns}
+  rowKey="id"
+  scroll={{ x: 400 }}
+/>
 
-    />
   </Col>
 </Row>
 

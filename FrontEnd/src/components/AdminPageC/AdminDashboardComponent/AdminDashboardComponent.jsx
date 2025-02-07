@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col } from 'antd';
 import { ShoppingCartOutlined, DollarCircleOutlined, ProductOutlined, UserOutlined, GiftOutlined } from '@ant-design/icons';
 import DashboardBox from './DashboardBox';
@@ -7,6 +7,7 @@ import AdminTableComponent from '../AdminTableComponent/AdminTableComponent';
 import { Bar, Pie } from 'react-chartjs-2';  // Import Pie Chart
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { DashBoard } from './style'
+import axios from "axios";
 
 // Đăng ký các thành phần cần thiết cho cả Bar và Pie
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement);
@@ -22,37 +23,21 @@ const reportData = [
   { id: 7, month: 'Tháng 7', year: 2024, revenue: 2000000, quantitySold: 300 },
   { id: 8, month: 'Tháng 8', year: 2024, revenue: 2200000, quantitySold: 320 },
   { id: 9, month: 'Tháng 9', year: 2024, revenue: 2400000, quantitySold: 350 },
-  { id: 10, month: 'Tháng 10', year: 2024, revenue: 2600000, quantitySold: 380 },
+  
 ];
 
 // Chart configuration for Bar chart
-const dataBar = {
-  labels: reportData.map(item => item.month), // Months on the X-axis
-  datasets: [
-    {
-      label: 'Doanh thu',
-      data: reportData.map(item => item.revenue), // Revenue data on the Y-axis
-      backgroundColor: 'rgb(75, 192, 192)', // Bar color
-      borderColor: 'rgb(75, 192, 192)', // Border color
-      borderWidth: 1,
-    },
-    {
-      label: 'Số lượng bán được',
-      data: reportData.map(item => item.quantitySold), // Quantity sold data on the Y-axis
-      backgroundColor: 'rgb(255, 159, 64)', // Bar color for quantity sold
-      borderColor: 'rgb(255, 159, 64)', // Border color
-      borderWidth: 1,
-      yAxisID: 'right-y', // Thêm ID cho y-axis của số lượng bán được
-    },
-  ],
-};
+
 
 const optionsBar = {
- 
   plugins: {
     title: {
       display: true,
-      text: 'Biểu đồ Doanh thu và Số lượng bán được 2024', // Tiêu đề của biểu đồ
+      text: 'Biểu đồ Doanh thu và Số lượng bán được 2025', // Tiêu đề của biểu đồ
+      font: {
+        size: 24,  // Thay đổi kích thước của tiêu đề (có thể tăng giá trị này nếu cần)
+        weight: 'bold',  // Để tiêu đề đậm
+      },
     },
     tooltip: {
       callbacks: {
@@ -89,12 +74,13 @@ const optionsBar = {
   },
 };
 
+
 // Pie chart data
 const pieData = {
   labels: ['Vợt', 'Giày', 'Áo', 'Váy', 'Quần', 'Túi vợt', 'Ba lô', 'Phụ kiện'], // Categories
   datasets: [
     {
-      label: 'Tỷ lệ bán được 2024',
+      label: 'Tỷ lệ bán được 2025',
       data: [15, 20, 25, 10, 5, 8, 7, 10], // Example data for the percentage of sales
       backgroundColor: [
         '#ff5733', '#33ff57', '#3357ff', '#f7c15c', '#d1f7c1', '#fc85ae', '#c6f4ff', '#ffeb64'
@@ -110,13 +96,13 @@ const optionsPie = {
   plugins: {
     title: {
       display: true,
-      text: 'Tỷ lệ bán các sản phẩm năm 2024', // Tiêu đề cho biểu đồ Pie
+      text: 'Tỷ lệ bán các sản phẩm năm 2025', // Tiêu đề cho biểu đồ Pie
       font: {
-        size: 18, // Kích thước font tiêu đề
+        size: 25, // Kích thước font tiêu đề
       },
     },
     legend: {
-      position: 'top',
+      position: 'bottom', // Đặt legend ở dưới đáy biểu đồ
       labels: {
         font: {
           size: 12, // Thu nhỏ font của chú thích
@@ -131,36 +117,14 @@ const optionsPie = {
       },
     },
   },
+  layout: {
+    margin: {
+      top: 50, // Tăng khoảng cách phía trên của biểu đồ
+    },
+  },
 };
 
 
-const totalData = [
-  {
-    title: "Tổng khách hàng",
-    value: 10,
-    icon: <UserOutlined />,
-    color: ["#1da256", "#48d483"],
-  },
-  {
-    title: "Tổng đơn hàng",
-    value: 10,
-    icon: <ShoppingCartOutlined />,
-    color: ["#c012e2", "#eb64fe"],
-  },
-  
-  {
-    title: "Tổng sản phẩm",
-    value: 10,
-    icon: <GiftOutlined />,
-    color: ["#e1950e", "#f3cd29"],
-  },
-  {
-    title: "Doanh thu",
-    value: 10,
-    icon: <DollarCircleOutlined />,
-    color: ["#1da256", "#48d483"],
-  },
-];
 
 // Cập nhật cấu trúc bảng sản phẩm bán chạy với cột "Số lượng bán được"
 const updatedColumnsProduct = [
@@ -174,14 +138,94 @@ const updatedColumnsProduct = [
 ];
 
 const AdminDashboardComponent = () => {
-  const handleChange = (value) => {
-    // Đổi dữ liệu hiển thị trên table
-  };
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [report1, setReport1] = useState([]);
+  const [report2, setReport2] = useState(pieData);
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try { 
+        const [customersRes, ordersRes, productsRes, revenueRes,orders,pieData] = await Promise.all([
+          axios.get("http://localhost:8081/api/users/count/customers"),
+          axios.get("http://localhost:8081/api/users/count/orders"),
+          axios.get("http://localhost:8081/api/users/count/products"),
+          axios.get("http://localhost:8081/api/users/count/revenue"),
+          axios.get("http://localhost:8081/api/users/report/report1"),
+          axios.get("http://localhost:8081/api/users/api/pie-data-by-type"),
+        ]);
+
+        setTotalCustomers(customersRes.data.totalCustomers);
+        setTotalOrders(ordersRes.data.totalOrders);
+        setTotalProducts(productsRes.data.totalProducts);
+        setTotalRevenue(revenueRes.data.totalRevenue);
+        setReport1(orders.data)
+        setReport2(pieData.data)
+        console.log("UUUUUUUU",pieData.data)
+      } catch (error) {
+        console.error("Lỗi khi gọi API:", error.response ? error.response.data : error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const totalData = [
+    {
+      title: "Tổng khách hàng",
+      value: totalCustomers,
+      icon: <UserOutlined />,
+      color: ["#1da256", "#48d483"],
+    },
+    {
+      title: "Tổng đơn hàng",
+      value: totalOrders,
+      icon: <ShoppingCartOutlined />,
+      color: ["#c012e2", "#eb64fe"],
+    },
+    {
+      title: "Tổng sản phẩm",
+      value: totalProducts,
+      icon: <GiftOutlined />,
+      color: ["#e1950e", "#f3cd29"],
+    },
+    {
+      title: "Doanh thu",
+      value: totalRevenue,
+      icon: <DollarCircleOutlined />,
+      color: ["#007bff", "#00aaff"], // Đổi màu xanh dương
+    },
+  ];
+  
+  console.log("REEEEEE",report1)
+  const dataBar = {
+    labels: report1?.map(item => item.month), // Months on the X-axis
+    datasets: [
+      {
+        label: 'Doanh thu',
+        data: report1?.map(item => item.revenue), // Revenue data on the Y-axis
+        backgroundColor: 'rgb(75, 192, 192)', // Bar color
+        borderColor: 'rgb(75, 192, 192)', // Border color
+        borderWidth: 1,
+      },
+      {
+        label: 'Số lượng bán được',
+        data: report1?.map(item => item.quantitySold), // Quantity sold data on the Y-axis
+        backgroundColor: 'rgb(255, 159, 64)', // Bar color for quantity sold
+        borderColor: 'rgb(255, 159, 64)', // Border color
+        borderWidth: 1,
+        yAxisID: 'right-y', // Thêm ID cho y-axis của số lượng bán được
+      },
+    ],
+  }; 
+  console.log("REPORT",report2)
   return (
     <div>
       <Row gutter={[16, 16]} style={{ margin: "5px 15px" }}>
-        {totalData.map((item) => (
+        {totalData?.map((item) => (
           <Col span={6} key={item.title}>
             <DashboardBox title={item.title} value={item.value} icon={item.icon} color={item.color} />
           </Col>
@@ -226,10 +270,11 @@ const AdminDashboardComponent = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        marginTop:"39px"
       }}
     >
       <Pie
-        data={pieData}
+        data={report2}
         options={optionsPie}
         style={{ width: "100%", height: "100%" }}
       />

@@ -24,6 +24,8 @@ import CatagoryItemComponent from '../../components/AdminPageC/CatagoryItemCompo
 import AdminProductComponent from '../../components/AdminPageC/AdminProductComponent/AdminProductComponent';
 import AdminProductDetail from '../../components/AdminPageC/AdminProductDetail/AdminProductDetail';
 import AdminManageAccount from '../../components/AdminPageC/AdminManageAccount/AdminManageAccount';
+import Setting from '../../components/AdminPageC/Setting/Setting';
+
 import AdminReport from '../../components/AdminPageC/AdminReport/AdminReport';
 import { jwtDecode } from 'jwt-decode';
 import { Link } from 'react-router-dom';
@@ -66,6 +68,7 @@ const itemMenu = [
     testid: "menu-products"
   },
   { label: "Tài khoản người dùng", key: "accounts", icon: <UserOutlined />,component: AdminManageAccount,allowedRoles: ["Admin"]},
+  { label: "Cài đặt chung", key: "setting", icon: <DashboardOutlined />, component: Setting ,allowedRoles: ["Admin"]},
   // { label: "Doanh thu", key: "income", icon: <DollarCircleOutlined /> , component: AdminReport,allowedRoles: ["Admin"]},
   // { label: "Giao diện & Hình ảnh", key: "interfaces", icon: <PictureOutlined />,allowedRoles: ["Admin"]},
 ];

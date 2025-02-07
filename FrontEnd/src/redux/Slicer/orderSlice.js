@@ -114,7 +114,27 @@ export const deleteOrder = createAsyncThunk(
     }
   }
 );
-
+export const updateOrderById = createAsyncThunk(
+  "orders/updateOrderById",
+  async ({ orderId, orderData }, thunkAPI) => {
+    try {
+      const token = getAuthToken();
+      const response = await axios.put(
+        `http://localhost:8081/api/orders/${orderId}`, // Sử dụng id trong URL
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+ 
 // Slice cho orders
 const orderSlice = createSlice({
   name: "orders",
@@ -128,6 +148,22 @@ const orderSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    .addCase(updateOrderById.pending, (state) => {
+      state.status = "loading";
+      state.error = null;
+    })
+    .addCase(updateOrderById.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      const index = state.orders.findIndex(order => order._id === action.payload._id);
+      if (index !== -1) {
+        state.orders[index] = action.payload;
+      }
+    })
+    .addCase(updateOrderById.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    })
+    
       // Lấy tất cả đơn hàng
       .addCase(fetchAllOrders.pending, (state) => {
         state.status = "loading";

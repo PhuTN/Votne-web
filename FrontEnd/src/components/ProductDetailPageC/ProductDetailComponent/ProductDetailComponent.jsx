@@ -256,9 +256,12 @@ const ProductDetailComponent = ({ product, brand }) => {
             <span style={{ color: 'blue', fontSize: '20px', margin: '5px 0px 0px 5px' }}>ƯU ĐÃI</span>
           </OfferTitle>
           <BenefitList>
-            {product.endows.map((benefit, index) => (
-              <BenefitItem key={index}>{benefit.description}</BenefitItem>
-            ))}
+          {product.endows
+  .filter((benefit) => benefit.active === true) // Nếu active là boolean
+  .map((benefit, index) => (
+    <BenefitItem key={index}>{benefit.description}</BenefitItem>
+  ))}
+
           </BenefitList>
         </OfferSection>
 

@@ -9,6 +9,10 @@ import refreshReducer from "./Slicer/refreshReducer"; // Import refresh reducer
 import orderReducer from "./Slicer/orderSlice"; // Import order reducer
 import uploadReducer from "./Slicer/attributeSlice"; // Import order reducer
 import reviewReducer from "./Slicer/reviewSlice"
+import locationReducer from "./Slicer/locationSlice"
+import settingsReducer from "./Slicer/settingsSlice"
+
+
 
 export const store = configureStore({
   reducer: {
@@ -21,7 +25,9 @@ export const store = configureStore({
     refresh: refreshReducer, // Reducer cho refresh
     orders: orderReducer, // Reducer cho đơn hàng
     upload:uploadReducer,
-    reviews:reviewReducer
+    reviews:reviewReducer,
+    location: locationReducer,
+    settings:settingsReducer
   },
 });
 

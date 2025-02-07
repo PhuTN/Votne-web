@@ -136,6 +136,20 @@ const AdminManageAccount = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
   };
+
+  const handleRoleChange = (userId, newRole) => {
+    const updatedUsers = filteredData.map((user) => {
+      if (user.id === userId) {
+        return { ...user, role: newRole };
+      }
+      return user;
+    });
+    setFilteredData(updatedUsers);
+  
+    // Hiển thị thông báo thành công
+    message.success(`Cập nhật vai trò thành công: ${newRole}`);
+  };
+  
   const columnsOrder = [
     { title: 'ID', dataIndex: 'id', key: 'id', align: 'left' },
     {
@@ -143,20 +157,19 @@ const AdminManageAccount = () => {
       dataIndex: 'role',
       key: 'role',
       align: 'left',
-      render: (role) => {
-        switch (role) {
-          case 'Admin':
-            return 'Quản trị viên';
-          case 'Customer':
-            return 'Khách hàng';
-          case 'Seller':
-            return 'Nhân viên bán hàng';
-          case 'WarehouseStaff':
-            return 'Nhân viên kho';
-          default:
-            return 'Không xác định';
-        }
-      },
+      render: (role, record) => (
+        <Select
+          value={role}
+          style={{ width: 150 }}
+          onChange={(value) => handleRoleChange(record.id, value)}
+          data-testid={`role-select-${record.id}`}
+        >
+          <Select.Option value="Admin">Quản trị viên</Select.Option>
+          <Select.Option value="Customer">Khách hàng</Select.Option>
+          <Select.Option value="Seller">Nhân viên bán hàng</Select.Option>
+          <Select.Option value="WarehouseStaff">Nhân viên kho</Select.Option>
+        </Select>
+      ),
     }
     ,
     { title: 'Tên tài khoản', dataIndex: 'username', key: 'username', align: 'left' },
@@ -204,32 +217,11 @@ const AdminManageAccount = () => {
       console.error("Failed to update users:", error);
     }
   };
-
-  // Modal logic for adding a user
+  console.log("HEELL",filteredData)
+  // Moda,filterefilterel logic for adding a user
   const handleAddUser = async (values) => {
     const usernameError = validateUsername(values.username|| '' );
-    if (usernameError) {
-      setErrorMessage(usernameError)
-      return;
-    }
-  
     
-    const  phoneError = validatePhonenumber(values.phoneNumber || '');
-    if(phoneError){
-      setErrorMessage(phoneError)
-      return;
-    }
-  
-    
-    if (!validateEmail(values.email)) {
-      setErrorMessage('Email không hợp lệ!');
-      console.log('Email không hợp lệ!')
-      return;
-    }
-
-    if(!validateAddStaffModule(values.username,values.phoneNumber,values.email,values.role || "Admin")){
-      return;
-    }
     try {
       const newUser = {
         id: Date.now(),  // Tạo ID tự động bằng cách sử dụng thời gian hiện tại
@@ -314,8 +306,9 @@ const AdminManageAccount = () => {
       <AdminTableComponent
   title="Tài khoản"
   columns={columnsOrder}
-  data={filteredData}
+  data={[...filteredData].reverse()} 
 />
+
 
 
       {/* Add User Modal */}

@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   avatar: { type: String, default: "" }, // Ảnh đại diện
   wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }], // Danh sách sản phẩm yêu thích
+  locationId: { type: mongoose.Schema.Types.ObjectId, ref: "Location", default: null }, // Tham chiếu đến Location
 });
 
 // So sánh mật khẩu khi đăng nhập

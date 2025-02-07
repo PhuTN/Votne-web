@@ -8,20 +8,20 @@ const DashboardBox = ({ title, value, icon, color }) => {
         width: '100%', // Đảm bảo chiếm toàn bộ chiều rộng
         backgroundImage: `linear-gradient(to right, ${color[0]}, ${color[1]})`
     }}>
-      <ButtonSpace align='center' style={{  }}>
-        <div >
-          <Statistic title={title} value={value} valueStyle={{
+      <ButtonSpace align='center' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <Statistic 
+            title={<span style={{ fontWeight: 'bold' }}>{title}</span>} // Làm đậm title
+            value={value} 
+            valueStyle={{
               color: '#ffffff',
               fontSize: 25,
-          }}  />
-           {/* <div style={{  }}>
-          {icon}
-        </div> */}
+            }} 
+          />
         </div>
-        <div style={{  }}>
+        <div style={{ marginLeft: 'auto' }}>
           {icon}
         </div>
-       
       </ButtonSpace>
     </DashboardButton>
   )

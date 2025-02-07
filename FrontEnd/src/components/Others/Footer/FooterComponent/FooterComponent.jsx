@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FooterContainer } from "./style";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSettings } from "../../../../redux/Slicer/settingsSlice";
+import mapimg from "../../../../images/map.jpg"
 
 const FooterComponent = () => {
+  const dispatch = useDispatch();
+  const [settings, setSettings] = useState(null);
+
+  // Lấy dữ liệu settings từ Redux
+  const { settings: reduxSettings } = useSelector((state) => state.settings);
+
+  useEffect(() => {
+    dispatch(fetchSettings()); // Gọi API lấy settings
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (reduxSettings) {
+      setSettings(reduxSettings[0]);
+    }
+  }, [reduxSettings]);
+
+  // Lấy dữ liệu location nếu có
+  const location = settings?.location;
+  const googleMapsUrl = location
+    ? `https://www.google.com/maps/place/?q=place_id:${location.locationID}`
+    : "#";
   return (
     <FooterContainer>
+   
       <div className="footer-columns">
         <div className="footer-column">
           <h3>THÔNG TIN CHUNG</h3>
@@ -71,17 +96,34 @@ const FooterComponent = () => {
           <p>Hướng dẫn mua hàng</p>
         </div>
       </div>
+     
+
+
+      
       <div
         className="footer-bottom"
         style={{ backgroundColor: "#1DA0F1", margin: "0" }}
       >
         <p>© CÔNG TY TNHH Vợt nè</p>
         <p>
-          Địa chỉ: 390/2 Hà Huy Giáp, Phường Thạnh Lộc, Quận 12, TPHCM<br></br>
+          Địa chỉ: Đường Tạ Quang Bửu, Khu phố 6, Thủ Đức, Hồ Chí Minh, Việt Nam<br></br>
+       <br></br>
           GPKD số 0314496879 do Sở KH và ĐT TP Hồ Chí Minh cấp ngày 05/07/2017{" "}
           <br></br>
           GĐ/Sở hữu website: Phan Lê Chi
         </p>
+        <div className=" footer-map">
+ 
+ {location && (
+   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
+     <img
+       src={mapimg}
+       alt="Bản đồ cửa hàng"
+       style={{ width: "300px", borderRadius: "8px",margin:'10px' }}
+     />
+   </a>
+ )}
+</div>
       </div>
     </FooterContainer>
   );
